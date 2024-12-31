@@ -24,7 +24,6 @@ class InitHelper
     $init_functions = [];
     $command_helper->notice('Processing Init Files -> ' . $init_dir);
     foreach ($all_files as $file) {
-      $relative_path = str_replace($base_path, '', $file);
       $class = str_replace($base_path, '', str_replace(".php", '', $file));
       $class = str_replace('/', '\\', $class);
       if ($namespace) {
@@ -37,7 +36,7 @@ class InitHelper
             $weight = $class_ref->hasProperty('weight') && ($weight_ref = $class_ref->getProperty('weight'))->isPublic()
               ? (int)($weight_ref->isStatic() ? $class_ref->newInstance()::$weight : $class_ref->newInstance()->weight)
               : 10;
-          } catch (Throwable $e) {
+          } catch (Throwable) {
             $weight = 10;
           }
           $method = $class_ref->getMethod('run');

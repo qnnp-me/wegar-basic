@@ -12,7 +12,7 @@ use Exception;
 class SessionHelper
 {
   protected static SessionHelper $instance;
-  readonly public object $user;
+  public object $user;
 
   public static function getInstance(): SessionHelper
   {
