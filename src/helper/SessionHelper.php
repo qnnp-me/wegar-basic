@@ -22,6 +22,9 @@ class SessionHelper
     return static::$instance;
   }
 
+  /**
+   * @throws Exception
+   */
   public function __call(string $name, ?array $arguments)
   {
     $_name = preg_replace("#([A-Z][a-z]+)$#", "*$1", $name);
