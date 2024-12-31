@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\helper;
+namespace config\plugin\wegar\basic\helper;
 
 use Exception;
 
@@ -12,7 +12,8 @@ use Exception;
 class SessionHelper
 {
   protected static SessionHelper $instance;
-  public object $user;
+  public mixed $user;
+  public mixed $lastRequestTime;
 
   public static function getInstance(): SessionHelper
   {

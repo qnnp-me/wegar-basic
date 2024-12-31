@@ -1,8 +1,8 @@
 <?php
 
+use config\plugin\wegar\basic\helper\SessionHelper;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use support\Response;
-use Wegar\Basic\helper\SessionHelper;
 
 if (!function_exists('json_error')) {
   function json_error(string $msg, int $code = 500, $data = null): Response
