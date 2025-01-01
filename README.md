@@ -101,7 +101,7 @@ namespace app\cron;
 use Wegar\Basic\attribute\CronRule;
 
 class Foo {
-    #[CronRule('*/ 5 * * * * *')] // 每5秒执行一次
+    #[CronRule('*/5 * * * * *')] // 每5秒执行一次
     function run(){
         // do something
     }
