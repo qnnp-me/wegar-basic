@@ -12,7 +12,7 @@ class InitHelper
    */
   static array $results = [];
 
-  static function loadInitFiles(string $init_dir, $namespace = ''): void
+  static function load(string $init_dir, $namespace = ''): void
   {
     $command_helper = new CommandHelper();
     if (!file_exists($init_dir)) {
