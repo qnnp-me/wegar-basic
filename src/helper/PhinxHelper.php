@@ -4,7 +4,6 @@ namespace Wegar\Basic\helper;
 
 use Phinx\Console\PhinxApplication;
 use Phinx\Wrapper\TextWrapper;
-use support\helper\CommandHelper;
 
 class PhinxHelper
 {
