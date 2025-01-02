@@ -5,7 +5,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use support\Response;
 
 if (!function_exists('json_error')) {
-  function json_error(string $msg, int $code = 500, $data = null): Response
+  function json_error(string $msg, int $code = 500, $data = null, int $options = JSON_UNESCAPED_UNICODE): Response
   {
     $debug = env('APP_DEBUG');
     $result = [
@@ -21,23 +21,23 @@ if (!function_exists('json_error')) {
         'header' => request()->header(),
       ];
     }
-    return json($result)->withStatus(($code >= 100 && $code < 600) ? $code : 500);
+    return json($result, $options)->withStatus(($code >= 100 && $code < 600) ? $code : 500);
   }
 }
 if (!function_exists('json_success')) {
-  function json_success(mixed $data = null, array $extra = []): Response
+  function json_success(mixed $data = null, array $extra = [], int $options = JSON_UNESCAPED_UNICODE): Response
   {
     if ($data instanceof LengthAwarePaginator) {
       return json([
         'data'  => $data->items(),
         'count' => $data->total(),
         ...$extra,
-      ]);
+      ], $options);
     }
     return json([
       'data' => $data,
       ...$extra,
-    ]);
+    ], $options);
   }
 }
 if (!function_exists('ss')) {
