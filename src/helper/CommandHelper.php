@@ -26,7 +26,7 @@ class CommandHelper
     $this->input = new StringInput('');
   }
 
-  function color($str, int $front, int $back = null): string
+  function color($str, int $front, ?int $back = null): string
   {
     $str = $this->consoleColor->apply("color_$front", $str);
     if ($back) $str = $this->bgColor($str, $back);
@@ -83,12 +83,12 @@ class CommandHelper
     $this->writeln($this->addPrefix($messages, '💔'), tag: "Failed ", back: 160);
   }
 
-  protected function writeln(string|iterable $messages, int $options = 0, string $tag = null, int $front = 231, int $back = 240): void
+  protected function writeln(string|iterable $messages, int $options = 0, ?string $tag = null, int $front = 231, int $back = 240): void
   {
     $this->write($messages, true, $options, $tag, $front, $back);
   }
 
-  function write(string|iterable $messages, bool $newline = false, int $options = 0, string $tag = null, $front = 231, $back = 240): void
+  function write(string|iterable $messages, bool $newline = false, int $options = 0, ?string $tag = null, $front = 231, $back = 240): void
   {
     $indent = '';
     if ($tag) {

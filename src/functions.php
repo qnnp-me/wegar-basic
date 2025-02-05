@@ -46,4 +46,15 @@ if (!function_exists('ss')) {
     return SessionHelper::getInstance();
   }
 }
+if (!function_exists('pick')) {
+  function pick(array|object $data, array $keys): array|object
+  {
+    if (is_object($data)) {
+      $data = (array)$data;
+    }
+    return array_filter($data, function ($key) use ($keys) {
+      return in_array($key, $keys);
+    }, ARRAY_FILTER_USE_KEY);
+  }
+}
 
