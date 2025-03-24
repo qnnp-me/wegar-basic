@@ -2,9 +2,9 @@
 
 ## 能力
 
-- ### [初始化任务自动加载](#load-init-task)
-- ### [数据库迁移自动加载](#load-migration)
-- ### [Cron任务自动加载](#load-cron)
+- [初始化任务自动加载](#load-init-task)
+- [数据库迁移自动加载](#load-migration)
+- [Cron任务自动加载](#load-cron)
 
 ## 初始化任务自动加载 <a name="load-init-task"></a>
 
@@ -109,3 +109,18 @@ class Foo {
 ```
 
 </details>
+
+## 远程 组件/APP 加载规则
+
+使用 `\Wegar\Basic\helper\RouteHelper::registerComponent` 注册远程组件
+
+- `RouteHelper::registerComponent(name: 'test-page', component_file_path: '...', need_base_url: true)`
+  - 前端访问 `/test-page{remaining_path: .*}` 可直接渲染远程组件/APP
+
+
+## 注意
+
+- 将会需要并申明以下函数
+    - `json_success` json success 响应
+    - `json_error` json err 响应
+    - `ss` 用于 session 快捷管理，通过修改 `config/plugin/wegar/basic/helper/SessionHelper.php` 增加自定义 session 名称

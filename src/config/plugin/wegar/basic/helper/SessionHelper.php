@@ -12,8 +12,10 @@ use Exception;
 class SessionHelper
 {
   protected static SessionHelper $instance;
-  public mixed $user;
-  public mixed $lastRequestTime;
+  /**
+   * Wegar User Session
+   */
+  public mixed $wegarUser;
 
   public static function getInstance(): SessionHelper
   {
