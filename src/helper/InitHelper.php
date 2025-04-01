@@ -22,7 +22,7 @@ class InitHelper
     $base_path = dirname($init_dir, 2);
     $all_files = IOHelper::scan_files($init_dir);
     $init_functions = [];
-    $command_helper->notice('Processing Init Files -> ' . $init_dir);
+    $command_helper->notice('Processing Init Files -> ' . str_replace(base_path(), '', $init_dir));
     foreach ($all_files as $file) {
       $class = str_replace($base_path, '', str_replace(".php", '', $file));
       $class = str_replace('/', '\\', $class);
@@ -52,7 +52,8 @@ class InitHelper
     });
     foreach ($init_functions as $function) {
       try {
-        $command_helper->info("Executing Init File: {$function['file']}");
+        $the_file = str_replace(base_path(), '', $function['file']);
+        $command_helper->info("Executing Init File: $the_file");
         call_user_func($function['call']);
       } catch (Throwable $th) {
         $command_helper->error("Executing Init File Error: {$th->getMessage()}\n{$th->getTraceAsString()}");
@@ -61,6 +62,6 @@ class InitHelper
     if (self::$results) {
       $command_helper->notice(self::$results);
     }
-    $command_helper->info('Init Finished -> ' . $init_dir);
+    $command_helper->info('Init Finished -> ' . str_replace(base_path(), '', $init_dir));
   }
 }

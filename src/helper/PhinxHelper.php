@@ -10,11 +10,11 @@ class PhinxHelper
   static function load(string $config_path): void
   {
     $command_helper = new CommandHelper();
-    if (!is_file($config_path)){
-      $command_helper->error("Phinx config file not found: $config_path");
+    if (!is_file($config_path)) {
+      $command_helper->error("Phinx config file not found: " . str_replace(base_path(), '', $config_path));
       return;
     }
-    $command_helper->notice("Loading Phinx -> $config_path");
+    $command_helper->notice("Loading Phinx -> " . str_replace(base_path(), '', $config_path));
     $app = new PhinxApplication();
     $wrap = new TextWrapper($app);
     $wrap->setOption('configuration', $config_path);

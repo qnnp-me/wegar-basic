@@ -13,15 +13,19 @@ class CronHelper
   {
     $command_helper = new CommandHelper();
     if (!file_exists($cron_dir)) {
-      $command_helper->error("Crontab dir not exists: $cron_dir");
+      $command_helper->error("Crontab dir not exists: " . str_replace(base_path(), '', $cron_dir));
       return;
     }
     $files = scandir($cron_dir);
-    $command_helper->notice("Loading Crontab -> $cron_dir");
+    $command_helper->notice("Loading Crontab -> " . str_replace(base_path(), '', $cron_dir));
     foreach ($files as $file) {
       $class = $namespace . str_replace('.php', '', $file);
       if (class_exists($class) && ($ref = new ReflectionClass($class))->hasMethod('run')) {
-        $method = $ref->getMethod('run');
+        try {
+          $method = $ref->getMethod('run');
+        } catch (\ReflectionException $e) {
+          $command_helper->error("Crontab Error: $class -> has no run method");
+        }
         $attrs = $method->getAttributes(CronRule::class);
         $is_static = $method->isStatic();
         foreach ($attrs as $attr) {
@@ -38,7 +42,7 @@ class CronHelper
         }
       }
     }
-    $command_helper->info("Crontab loaded -> $cron_dir");
+    $command_helper->info("Crontab loaded -> " . str_replace(base_path(), '', $cron_dir));
 
   }
 }
