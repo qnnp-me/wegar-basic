@@ -5,6 +5,7 @@
   "description": "Webman plugin wegar/basic",
   "require": {
     "php": ">=8.0",
+    "ext-fileinfo": "*",
     "ext-mbstring": "*",
     "illuminate/pagination": "^11.0|^12.0",
     "monolog/monolog": "^2.10",

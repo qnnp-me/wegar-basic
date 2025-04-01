@@ -9,13 +9,12 @@ class RouteHelper
 {
   /**
    * 注册 Wegar 远程组件文件路由
-   *
    * @param string $name
    * @param string $component_file_path
    * @param string $css_file_path
    * @param string $route_prefix
    * @param string $route_suffix
-   * @param bool   $need_base_url
+   * @param bool $need_base_url
    * @return void
    */
   static function registerComponent(
@@ -62,7 +61,12 @@ class RouteHelper
       return not_found();
     }
     $file_info = pathinfo($file_path);
-    $content_type = response()->getMimeTypeMap()[$file_info['extension']] ?? mime_content_type($file_path);
+    $has_modified_response_method = method_exists(response(), 'getMimeTypeMap');
+    if ($has_modified_response_method) {
+      $content_type = response()->getMimeTypeMap()[$file_info['extension']] ?? mime_content_type($file_path);
+    } else {
+      $content_type = mime_content_type($file_path);
+    }
     return response()->withFile($file_path)->withHeader('Content-Type', $content_type);
   }
 }
