@@ -10,6 +10,7 @@ class Phinx extends InitAbstract
 
   function run(): void
   {
-    PhinxHelper::load(base_path('phinx.php'));
+    $phinx_file = base_path('phinx.php');
+    PhinxHelper::load($phinx_file);
   }
 }

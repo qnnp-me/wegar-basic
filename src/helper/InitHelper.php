@@ -32,13 +32,7 @@ class InitHelper
       if (class_exists($class) && method_exists($class, 'run')) {
         $class_ref = new ReflectionClass($class);
         if ($class_ref->hasMethod('run')) {
-          try {
-            $weight = $class_ref->hasProperty('weight') && ($weight_ref = $class_ref->getProperty('weight'))->isPublic()
-              ? (int)($weight_ref->isStatic() ? $class_ref->newInstance()::$weight : $class_ref->newInstance()->weight)
-              : 10;
-          } catch (Throwable) {
-            $weight = 10;
-          }
+          $weight = $class_ref->hasProperty('weight') ? $class_ref->getProperty('weight')->getValue() : 10;
           $method = $class_ref->getMethod('run');
           $function = [
             'weight' => $weight,
