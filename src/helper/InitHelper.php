@@ -32,7 +32,7 @@ class InitHelper
       if (class_exists($class) && method_exists($class, 'run')) {
         $class_ref = new ReflectionClass($class);
         if ($class_ref->hasMethod('run')) {
-          $weight = $class_ref->hasProperty('weight') ? $class_ref->getProperty('weight')->getValue() : 10;
+          $weight = $class_ref->hasProperty('weight') ? $class_ref->getDefaultProperties()['weight'] ?? 10 : 10;
           $method = $class_ref->getMethod('run');
           $function = [
             'weight' => $weight,
