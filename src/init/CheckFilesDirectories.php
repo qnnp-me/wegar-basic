@@ -17,10 +17,10 @@ class CheckFilesDirectories extends InitAbstract
   function checkDirs(): void
   {
     if (!is_dir(app_path('init'))) {
-      mkdir(app_path('init'), 644, true);
+      mkdir(app_path('init'), recursive: true);
     }
     if (!is_dir(app_path('cron'))) {
-      mkdir(app_path('cron'), 644, true);
+      mkdir(app_path('cron'), recursive: true);
     }
   }
 
@@ -28,10 +28,10 @@ class CheckFilesDirectories extends InitAbstract
   {
     $phinx_file = base_path('phinx.php');
     if (!is_dir(base_path("database/migrations"))) {
-      mkdir(base_path("database/migrations"), 644, true);
+      mkdir(base_path("database/migrations"), recursive: true);
     }
     if (!is_dir(base_path("database/migrations"))) {
-      mkdir(base_path("database/seeds"), 644, true);
+      mkdir(base_path("database/seeds"), recursive: true);
     }
     if (!file_exists($phinx_file)) {
       file_put_contents($phinx_file,
