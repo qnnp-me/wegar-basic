@@ -30,7 +30,7 @@ class CheckFilesDirectories extends InitAbstract
     if (!is_dir(base_path("database/migrations"))) {
       mkdir(base_path("database/migrations"), recursive: true);
     }
-    if (!is_dir(base_path("database/migrations"))) {
+    if (!is_dir(base_path("database/seeds"))) {
       mkdir(base_path("database/seeds"), recursive: true);
     }
     if (!file_exists($phinx_file)) {
