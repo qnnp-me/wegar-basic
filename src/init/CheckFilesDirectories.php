@@ -39,10 +39,21 @@ class CheckFilesDirectories extends InitAbstract
   {
     if (class_exists(\Dotenv\Dotenv::class) && !file_exists(run_path(".env.example"))) {
       file_put_contents(run_path(".env.example"), /** @lang dotenv */ "
-# APP_NAME 应该和同系统中的其他应用保持不一致
-APP_NAME=app_name
-APP_DEBUG=true
-SERVER_PORT=8787
+DEBUG=true
+
+# PROJECT_NAME 应该和同系统中的其他项目保持不一致
+PROJECT_NAME=app_name
+
+# HTTP 服务相关设置
+HTTP_IP=[::]
+HTTP_PORT=8787
+# HTTP_CPU_COUNT=
+# HTTP_USER=
+# HTTP_GROUP=
+# HTTP_REUSE_PORT=
+
+# 最大数据包大小
+SERVER_MAX_PACKAGE_SIZE=10485760
 
 MYSQL_HOST=127.0.0.1
 MYSQL_DBNAME=
@@ -54,10 +65,8 @@ REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 
-# HTTP_PROCESS
-# HTTP_CPU_COUNT=
 
-# Phar 和二进制打包相关
+# Phar 和 二进制打包配置
 # BUILD_DIR=
 # BUILD_PHAR_FILENAME=webman.phar
 # BUILD_BIN_FILENAME=webman.bin
