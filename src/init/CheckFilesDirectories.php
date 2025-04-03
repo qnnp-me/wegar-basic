@@ -12,6 +12,7 @@ class CheckFilesDirectories extends InitAbstract
 
   function run(): void
   {
+    $this->checkEnvExample();
     $this->checkDirs();
     $this->checkAndCreatePhinxFiles();
   }
