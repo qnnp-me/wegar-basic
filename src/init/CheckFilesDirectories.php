@@ -65,7 +65,6 @@ REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 
-
 # Phar 和 二进制打包配置
 # BUILD_DIR=
 # BUILD_PHAR_FILENAME=webman.phar
