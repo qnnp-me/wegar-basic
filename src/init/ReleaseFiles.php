@@ -15,10 +15,11 @@ class ReleaseFiles extends InitAbstract
   {
     if (is_phar()) {
       $command_helper = new CommandHelper();
-      $phar = Phar::running();
-      if ($phar && (config('extract.enable') || config('app.release'))) {
+      if (Phar::running()) {
         $command_helper->notice("Releasing files...");
-        $extract_list = config('extract.list', []) + config('app.release', []);
+        $extract_list = config('extract.list', []) + config('app.release', []) + [
+            '.env.example' => run_path(),
+          ];
         foreach ($extract_list as $from => $to) {
           IOHelper::release($from, $to);
         }

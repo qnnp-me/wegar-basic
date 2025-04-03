@@ -8,10 +8,23 @@ use Phar;
 class IOHelper
 {
 
-  static function release(string $from, string $to, $overwrite = true): void
+  /**
+   * @param string $from 要释放的目录或者文件路径 如 .env.example
+   * @param string $to 释放到的目录
+   * @param bool $overwrite
+   * @return void
+   */
+  static function release(string $from, string $to, bool $overwrite = true): void
   {
     if (is_phar() && file_exists($from)) {
       $command_helper = new CommandHelper();
+      if (!file_exists($to)) {
+        mkdir($to, recursive: true);
+      }
+      if (!$overwrite && file_exists($to . DIRECTORY_SEPARATOR . $from)) {
+        $command_helper->warning("$to" . DIRECTORY_SEPARATOR . "$from exists, skip");
+        return;
+      }
       $phar = Phar::running();
       if ($phar) {
         $phar = new Phar($phar);
