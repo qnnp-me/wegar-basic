@@ -2,7 +2,9 @@
 
 namespace Wegar\Basic\init;
 
+use Webman\RedisQueue\Process\Consumer;
 use Wegar\Basic\abstract\InitAbstract;
+use Workerman\Crontab\Crontab;
 
 class CheckFilesDirectories extends InitAbstract
 {
@@ -19,8 +21,51 @@ class CheckFilesDirectories extends InitAbstract
     if (!is_dir(app_path('init'))) {
       mkdir(app_path('init'), recursive: true);
     }
-    if (!is_dir(app_path('cron'))) {
+    if (class_exists(Crontab::class) && !is_dir(app_path('cron'))) {
       mkdir(app_path('cron'), recursive: true);
+    }
+    foreach (config('plugin.webman.redis-queue.process', []) as $name => $config) {
+      if (
+        config("plugin.webman.redis-queue.process.$name.handler") === Consumer::class
+        && !is_dir(config("plugin.webman.redis-queue.process.$name.constructor.consumer_dir", ''))
+      ) {
+        mkdir(config("plugin.webman.redis-queue.process.$name.constructor.consumer_dir", ''), recursive: true);
+      }
+    }
+  }
+
+  function checkEnvExample(): void
+  {
+    if (class_exists(\Dotenv\Dotenv::class) && !file_exists(run_path(".env.example"))) {
+      file_put_contents(run_path(".env.example"), /** @lang dotenv */ "
+# APP_NAME 应该和同系统中的其他应用保持不一致
+APP_NAME=app_name
+APP_DEBUG=true
+SERVER_PORT=8787
+
+MYSQL_HOST=127.0.0.1
+MYSQL_DBNAME=
+MYSQL_USER=
+MYSQL_PASSWORD=
+MYSQL_PORT=3306
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+# HTTP_PROCESS
+# HTTP_CPU_COUNT=
+
+# Phar 和二进制打包相关
+# BUILD_DIR=
+# BUILD_PHAR_FILENAME=webman.phar
+# BUILD_BIN_FILENAME=webman.bin
+# BUILD_EXCLUDE_PATTERN=#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.setting/|/runtime/|/vendor-bin/|/build/|/vendor/webman/admin/))(.*)$#
+# BUILD_EXCLUDE_FILES=.env,LICENSE,composer.json,composer.lock,start.php,webman.phar,webman.bin
+# BUILD_CUSTOM_INI=\"
+# memory_limit = 256M
+# \"
+");
     }
   }
 

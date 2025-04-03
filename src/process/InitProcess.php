@@ -4,6 +4,7 @@ namespace Wegar\Basic\process;
 
 use Wegar\Basic\helper\CronHelper;
 use Wegar\Basic\helper\InitHelper;
+use Workerman\Crontab\Crontab;
 
 class InitProcess
 {
@@ -16,9 +17,11 @@ class InitProcess
     InitHelper::load(
       base_path('app' . DIRECTORY_SEPARATOR . 'init')
     );
-    CronHelper::load(
-      base_path('app' . DIRECTORY_SEPARATOR . 'cron'),
-      'app\\cron\\'
-    );
+    if (class_exists(Crontab::class)) {
+      CronHelper::load(
+        base_path('app' . DIRECTORY_SEPARATOR . 'cron'),
+        'app\\cron\\'
+      );
+    }
   }
 }

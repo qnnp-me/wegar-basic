@@ -3,6 +3,7 @@
 namespace Wegar\Basic\helper;
 
 use ReflectionClass;
+use ReflectionException;
 use Throwable;
 use Wegar\Basic\attribute\CronRule;
 use Workerman\Crontab\Crontab;
@@ -23,8 +24,9 @@ class CronHelper
       if (class_exists($class) && ($ref = new ReflectionClass($class))->hasMethod('run')) {
         try {
           $method = $ref->getMethod('run');
-        } catch (\ReflectionException $e) {
-          $command_helper->error("Crontab Error: $class -> has no run method");
+        } catch (ReflectionException $e) {
+          $command_helper->error("Load Crontab Failed: $class -> " . $e->getMessage());
+          continue;
         }
         $attrs = $method->getAttributes(CronRule::class);
         $is_static = $method->isStatic();
@@ -36,7 +38,7 @@ class CronHelper
               $rule_str = str_pad($rule, 20, ' ', STR_PAD_BOTH);
               $command_helper->info("Crontab: [$rule_str] <- $class");
             } catch (Throwable $e) {
-              $command_helper->error("add Crontab Error: $class -> " . $e->getMessage());
+              $command_helper->error("Add Crontab Failed: $class -> " . $e->getMessage());
             }
           }
         }

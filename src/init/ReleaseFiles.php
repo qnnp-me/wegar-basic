@@ -5,6 +5,7 @@ namespace Wegar\Basic\init;
 use Phar;
 use Wegar\Basic\abstract\InitAbstract;
 use Wegar\Basic\helper\CommandHelper;
+use Wegar\Basic\helper\PharReleaseHelper;
 
 class ReleaseFiles extends InitAbstract
 {
@@ -15,13 +16,11 @@ class ReleaseFiles extends InitAbstract
     if (is_phar()) {
       $command_helper = new CommandHelper();
       $phar = Phar::running();
-      if ($phar && config('extract.enable')) {
+      if ($phar && (config('extract.enable') || config('app.release'))) {
         $command_helper->notice("Releasing files...");
-        $phar = new Phar($phar);
-        $extract_list = config('extract.list');
+        $extract_list = config('extract.list', []) + config('app.release', []);
         foreach ($extract_list as $from => $to) {
-          $phar->extractTo($to, $from, true);
-          $command_helper->info("Release $from to $to");
+          PharReleaseHelper::release($from, $to);
         }
         $command_helper->success("Release success.");
       }

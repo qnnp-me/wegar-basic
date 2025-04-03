@@ -6,13 +6,10 @@
   "require": {
     "php": ">=8.0",
     "ext-fileinfo": "*",
-    "ext-mbstring": "*",
-    "illuminate/pagination": "^11.0|^12.0",
     "monolog/monolog": "^2.10",
     "php-parallel-lint/php-console-color": "^1.0",
     "robmorgan/phinx": "^0.16",
     "symfony/console": "^7.2",
-    "workerman/crontab": "^1.0",
     "workerman/webman-framework": "^1.6.11|^2.1"
   },
   "autoload": {
