@@ -3,9 +3,23 @@
 namespace Wegar\Basic\helper;
 
 use Generator;
+use Phar;
 
 class IOHelper
 {
+
+  static function release(string $from, string $to, $overwrite = true): void
+  {
+    if (is_phar() && file_exists($from)) {
+      $command_helper = new CommandHelper();
+      $phar = Phar::running();
+      if ($phar) {
+        $phar = new Phar($phar);
+        $command_helper->info("Release $from to $to");
+        $phar->extractTo($to, $from, $overwrite);
+      }
+    }
+  }
 
   /**
    * @param string $path file or dir path
