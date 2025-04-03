@@ -7,7 +7,6 @@ use support\Response;
 if (!function_exists('json_error')) {
   function json_error(string $msg, int $code = 500, $data = null, int $options = JSON_UNESCAPED_UNICODE): Response
   {
-    $debug = env('APP_DEBUG');
     $result = [
       'code' => $code,
       'msg'  => $msg,
@@ -15,7 +14,7 @@ if (!function_exists('json_error')) {
     if ($data) {
       $result['data'] = $data;
     }
-    if ($debug) {
+    if (env('DEBUG', false)) {
       $result['debug'] = [
         'data'   => request()->all(),
         'header' => request()->header(),
