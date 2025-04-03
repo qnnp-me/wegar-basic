@@ -66,7 +66,7 @@ REDIS_PASSWORD=null
 REDIS_PORT=6379
 
 # Phar 和 二进制打包配置
-# BUILD_DIR=
+# BUILD_DIR=build
 # BUILD_PHAR_FILENAME=webman.phar
 # BUILD_BIN_FILENAME=webman.bin
 # BUILD_EXCLUDE_PATTERN=#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.setting/|/runtime/|/vendor-bin/|/build/|/vendor/webman/admin/))(.*)$#
