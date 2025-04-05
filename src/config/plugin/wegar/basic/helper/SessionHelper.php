@@ -7,15 +7,13 @@ use Exception;
 /**
  * session 管理模块
  * 在此类增加的属性名即为可被管理的 session 名
- * 以属性名为前缀的方法名即为可被调用的方法, 可用方法为 get, set, delete, pull, exists, has
+ * 以属性名为前缀的方法名即为可被调用的方法, 可用方法为 delete, exists, forget, get, has, put, pull, set
  */
 class SessionHelper
 {
   protected static SessionHelper $instance;
-  /**
-   * Wegar User Session
-   */
-  public mixed $wegarUser;
+
+  public mixed $some_session_name;
 
   public static function getInstance(): SessionHelper
   {
