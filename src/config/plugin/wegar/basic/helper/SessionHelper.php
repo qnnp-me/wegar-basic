@@ -36,7 +36,16 @@ class SessionHelper
     if (!property_exists($this, $session_name)) {
       throw new Exception("session $session_name 未被管理 -> 请至：config/plugin/wegar/basic/helper/SessionHelper.php 添加 \$$session_name 属性");
     }
-    $methods = ['get', 'set', 'delete', 'pull', 'exists', 'has'];
+    $methods = [
+      'delete',
+      'exists',
+      'forget',
+      'get',
+      'has',
+      'put',
+      'pull',
+      'set',
+    ];
     $method = strtolower($_name[1]);
     if (!in_array($method, $methods)) {
       throw new Exception("方法 $method 不被支持");
