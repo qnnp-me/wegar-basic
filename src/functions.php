@@ -16,8 +16,9 @@ if (!function_exists('json_error')) {
     }
     if (env('DEBUG', false)) {
       $result['debug'] = [
-        'data'   => request()->all(),
-        'header' => request()->header(),
+        'data'    => request()->all(),
+        'header'  => request()->header(),
+        'rawBuffer' => request()->rawBuffer()
       ];
     }
     return json($result, $options)->withStatus(($code >= 100 && $code < 600) ? $code : 500);

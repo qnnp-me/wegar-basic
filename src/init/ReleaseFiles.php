@@ -17,9 +17,7 @@ class ReleaseFiles extends InitAbstract
       $command_helper = new CommandHelper();
       if (Phar::running()) {
         $command_helper->notice("Releasing files...");
-        $extract_list = config('extract.list', []) + config('app.release', []) + [
-            '.env.example' => run_path(),
-          ];
+        $extract_list = config('extract.list', []) + config('app.build_release', []);
         foreach ($extract_list as $from => $to) {
           IOHelper::release($from, $to);
         }

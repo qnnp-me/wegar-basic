@@ -5,6 +5,7 @@
 - [初始化任务自动加载](#load-init-task)
 - [数据库迁移自动加载](#load-migration)
 - [Cron任务自动加载](#load-cron)
+- [自动释放打包文件](#build_release)
 
 ## 初始化任务自动加载 <a name="load-init-task"></a>
 
@@ -110,17 +111,39 @@ class Foo {
 
 </details>
 
-## 远程 组件/APP 加载规则
+## 打包文件自动释放文件 <a name="build_release"></a>
 
-使用 `\Wegar\Basic\helper\RouteHelper::registerComponent` 注册远程组件
+在 `config/app.php` 中设置 `build_release` 即可自动释放打包文件。
 
-- `RouteHelper::registerComponent(name: 'test-page', component_file_path: '...', need_base_url: true)`
-  - 前端访问 `/test-page{remaining_path: .*}` 可直接渲染远程组件/APP
+<details>
 
+<summary><code>config/app.php</code>示例</summary>
+
+```php
+# config/app.php
+  ...
+  'build_release' => [
+    '.env.example' => run_path(), # 将 .env.example 文件释放到运行目录下
+    'public/' => run_path(),
+    'plugin/admin/public/' => run_path(),
+  ],
+  ...
+```
+</details>
+
+[//]: # (## 远程 组件/APP 加载规则)
+
+[//]: # ()
+[//]: # (使用 `\Wegar\Basic\helper\RouteHelper::registerComponent` 注册远程组件)
+
+[//]: # ()
+[//]: # (- `RouteHelper::registerComponent&#40;name: 'test-page', component_file_path: '...', need_base_url: true&#41;`)
+
+[//]: # (    - 前端访问 `/test-page{remaining_path: .*}` 可直接渲染远程组件/APP)
 
 ## 注意
 
 - 将会需要并申明以下函数
     - `json_success` json success 响应
     - `json_error` json err 响应
-    - `ss` 用于 session 快捷管理，通过修改 `config/plugin/wegar/basic/helper/SessionHelper.php` 增加自定义 session 名称
+    - `ss` 用于 session 快捷管理，通过修改 `config/plugin/wegar/basic/helper/SessionHelper.php` 增加自定义 session 名称和方法
