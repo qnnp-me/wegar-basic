@@ -1,7 +1,5 @@
 # Wegar Basic
 
-## 能力
-
 - [初始化任务自动加载](#load-init-task)
 - [数据库迁移自动加载](#load-migration)
 - [Cron任务自动加载](#load-cron)
@@ -38,8 +36,9 @@ class Foo extends InitAbstract {
 
 ## 数据库迁移自动加载 <a name="load-migration"></a>
 
-在项目根目录创建`phinx.php`文件，并创建目录`database/migrations`和`database/seeds`，使用命令`phinx create`
-创建迁移文件。当启动时，系统会自动执行迁移文件。
+在项目根目录创建`phinx.php`文件，使用命令`phinx create`创建迁移文件。当启动时，会自动执行迁移文件。
+
+如果使用 bin 或者 phar 打包时需要设置自动释放配置。
 
 <details>
 
@@ -59,10 +58,8 @@ if (class_exists('Dotenv\Dotenv') && file_exists(base_path(false) . '/.env')) {
 }
 return [
   "paths"        => [
-    "migrations" => base_path("database/migrations"),
-    "seeds"      => base_path("database/seeds")
-    //"migrations" => is_phar() ? runtime_path('phinx/database/migrations') : base_path("database/migrations"),
-    //"seeds"      => is_phar() ? runtime_path('phinx/database/seeds') : base_path("database/seeds")
+    "migrations" => is_phar() ? runtime_path('phinx/database/migrations') : base_path("database/migrations"),
+    "seeds"      => is_phar() ? runtime_path('phinx/database/seeds') : base_path("database/seeds")
   ],
   "environments" => [
     "default_migration_table" => "phinxlog",
@@ -126,6 +123,7 @@ class Foo {
     '.env.example' => run_path(), # 将 .env.example 文件释放到运行目录下
     'public/' => run_path(),
     'plugin/admin/public/' => run_path(),
+    'database/' => runtime_path('phinx'), # 将 database 目录释放到 phinx 运行目录下
   ],
   ...
 ```

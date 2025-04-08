@@ -12,6 +12,7 @@ class CheckFilesDirectories extends InitAbstract
 
   function run(): void
   {
+    if (is_phar()) return;
     $this->checkEnvExample();
     $this->checkDirs();
     $this->checkAndCreatePhinxFiles();
@@ -37,7 +38,7 @@ class CheckFilesDirectories extends InitAbstract
 
   function checkEnvExample(): void
   {
-    if (class_exists(\Dotenv\Dotenv::class) && !file_exists(run_path(".env.example"))) {
+    if (class_exists(\Dotenv\Dotenv::class) && !file_exists(base_path(".env.example"))) {
       file_put_contents(run_path(".env.example"), /** @lang dotenv */ "
 DEBUG=true
 
