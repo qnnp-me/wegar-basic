@@ -16,21 +16,25 @@ class IOHelper
    */
   static function release(string $from, string $to, bool $overwrite = true): void
   {
-    if (is_phar() && file_exists($from)) {
-      $command_helper = new CommandHelper();
-      if (!file_exists($to)) {
-        mkdir($to, recursive: true);
-      }
-      if (!$overwrite && file_exists($to . DIRECTORY_SEPARATOR . $from)) {
-        $command_helper->warning("$to" . DIRECTORY_SEPARATOR . "$from exists, skip");
-        return;
-      }
-      $phar = Phar::running();
-      if ($phar) {
-        $phar = new Phar($phar);
-        $command_helper->info("Release $from to $to");
+    $command_helper = new CommandHelper();
+    static $phar;
+    if (!$phar) {
+      $phar = new Phar(Phar::running());
+    }
+    try {
+      if (is_phar()) {
+        if (!file_exists($to)) {
+          mkdir($to, recursive: true);
+        }
+        if (!$overwrite && file_exists($to . DIRECTORY_SEPARATOR . $from)) {
+          $command_helper->warning("$to" . DIRECTORY_SEPARATOR . "$from exists, skip");
+          return;
+        }
         $phar->extractTo($to, $from, $overwrite);
+        $command_helper->info("Release $from to $to");
       }
+    } catch (\Exception $e) {
+      $command_helper->error("Release $from failed -> {$e->getMessage()}");
     }
   }
 
