@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\helper;
+namespace Wegar\Basic\Helper;
 
 use ReflectionClass;
 use Throwable;
@@ -15,20 +15,25 @@ class InitHelper
   static function load(string $init_dir, $namespace = ''): void
   {
     $command_helper = new CommandHelper();
+    $relative_dir = str_replace(base_path(), '', $init_dir);
     if (!file_exists($init_dir)) {
-      $command_helper->error("Init Files Not Found: $init_dir");
+      $command_helper->error("Init Files Not Found: $relative_dir");
       return;
     }
     $base_path = dirname($init_dir, 2);
     $all_files = IOHelper::scan_files($init_dir);
     $init_functions = [];
-    $command_helper->notice('Processing Init Files -> ' . str_replace(base_path(), '', $init_dir));
-    foreach ($all_files as $file) {
-      $class = str_replace($base_path, '', str_replace(".php", '', $file));
-      $class = str_replace('/', '\\', $class);
-      if ($namespace) {
-        $class = $namespace . preg_replace("#.*[\\\/]([^\\\/]+)\.php#", "\${1}", $file);
+    $command_helper->notice('Processing Init Files -> ' . str_replace(base_path(), '', $relative_dir));
+    foreach ($all_files as $key => $file) {
+      if (!$key) {
+        if (!$namespace) {
+          $file_content = file_get_contents($file);
+          if (preg_match('/namespace\s+([^\s;]+)/', $file_content, $matches)) {
+            $namespace = '\\' . $matches[1];
+          }
+        }
       }
+      $class = $namespace . '\\' . preg_replace("#.*[\\\/]([^\\\/]+)\.php#", "\${1}", $file);
       if (class_exists($class) && method_exists($class, 'run')) {
         $class_ref = new ReflectionClass($class);
         if ($class_ref->hasMethod('run')) {
@@ -62,6 +67,6 @@ class InitHelper
     if (self::$results) {
       $command_helper->notice(self::$results);
     }
-    $command_helper->info('Init Finished -> ' . str_replace(base_path(), '', $init_dir));
+    $command_helper->info('Init Finished -> ' . $relative_dir . ':' . $namespace);
   }
 }

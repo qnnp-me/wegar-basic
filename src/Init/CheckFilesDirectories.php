@@ -1,9 +1,9 @@
 <?php
 
-namespace Wegar\Basic\init;
+namespace Wegar\Basic\Init;
 
 use Webman\RedisQueue\Process\Consumer;
-use Wegar\Basic\abstract\InitAbstract;
+use Wegar\Basic\Abstract\InitAbstract;
 use Workerman\Crontab\Crontab;
 
 class CheckFilesDirectories extends InitAbstract

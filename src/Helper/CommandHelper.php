@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\helper;
+namespace Wegar\Basic\Helper;
 
 use Monolog\Logger;
 use PHP_Parallel_Lint\PhpConsoleColor\ConsoleColor;

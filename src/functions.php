@@ -16,8 +16,8 @@ if (!function_exists('json_error')) {
     }
     if (env('DEBUG', false)) {
       $result['debug'] = [
-        'data'    => request()->all(),
-        'header'  => request()->header(),
+        'data'      => request()->all(),
+        'header'    => request()->header(),
         'rawBuffer' => request()->rawBuffer()
       ];
     }
@@ -44,5 +44,26 @@ if (!function_exists('ss')) {
   function ss(): SessionHelper
   {
     return SessionHelper::getInstance();
+  }
+}
+
+if (!function_exists('env')) {
+  function env($key, $default = null)
+  {
+    $value = getenv($key);
+    $value = $value === false ? $default : $value;
+    $value = match ($value) {
+      'true', '(true)'   => true,
+      'false', '(false)' => false,
+      'empty', '(empty)' => '',
+      'null', '(null)'   => null,
+      default            => $value,
+    };
+
+    if (preg_match('/\A([\'"])(.*)\1\z/', $value, $matches)) {
+      return $matches[2];
+    }
+
+    return $value;
   }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace Wegar\Basic\helper;
+namespace Wegar\Basic\Helper;
 
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
-use Wegar\Basic\attribute\CronRule;
+use Wegar\Basic\Attribute\CronRule;
 use Workerman\Crontab\Crontab;
 
 class CronHelper

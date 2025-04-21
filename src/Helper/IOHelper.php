@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\helper;
+namespace Wegar\Basic\Helper;
 
 use Generator;
 use Phar;

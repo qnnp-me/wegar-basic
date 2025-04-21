@@ -1,10 +1,10 @@
 <?php
 
-namespace Wegar\Basic\init;
+namespace Wegar\Basic\Init;
 
 use plugin\admin\app\common\Util;
 use plugin\admin\app\model\Rule;
-use Wegar\Basic\abstract\InitAbstract;
+use Wegar\Basic\Abstract\InitAbstract;
 
 class PermissionTSGenerator extends InitAbstract
 {

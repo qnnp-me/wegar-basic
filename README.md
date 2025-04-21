@@ -20,7 +20,7 @@
 
 namespace app\init;
 
-use Wegar\Basic\abstract\InitAbstract;
+use Wegar\Basic\Abstract\InitAbstract;
 
 class Foo extends InitAbstract {
 
@@ -36,7 +36,7 @@ class Foo extends InitAbstract {
 
 ## 数据库迁移自动加载 <a name="load-migration"></a>
 
-在项目根目录创建`phinx.php`文件，使用命令`phinx create`创建迁移文件。当启动时，会自动执行迁移文件。
+在项目根目录创建`phinx.php`文件，使用命令 `phinx create` 或者 `webman phinx create` 创建迁移文件。当启动时，会自动执行迁移文件。
 
 如果使用 bin 或者 phar 打包时需要设置自动释放配置。
 
@@ -96,7 +96,7 @@ return [
 
 namespace app\cron;
 
-use Wegar\Basic\attribute\CronRule;
+use Wegar\Basic\Attribute\CronRule;
 
 class Foo {
     #[CronRule('*/5 * * * * *')] // 每5秒执行一次

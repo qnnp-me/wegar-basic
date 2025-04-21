@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\attribute;
+namespace Wegar\Basic\Attribute;
 
 use Attribute;
 

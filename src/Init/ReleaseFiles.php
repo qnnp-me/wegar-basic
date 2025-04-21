@@ -1,11 +1,11 @@
 <?php
 
-namespace Wegar\Basic\init;
+namespace Wegar\Basic\Init;
 
 use Phar;
-use Wegar\Basic\abstract\InitAbstract;
-use Wegar\Basic\helper\CommandHelper;
-use Wegar\Basic\helper\IOHelper;
+use Wegar\Basic\Abstract\InitAbstract;
+use Wegar\Basic\Helper\CommandHelper;
+use Wegar\Basic\Helper\IOHelper;
 
 class ReleaseFiles extends InitAbstract
 {

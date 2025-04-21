@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\interface;
+namespace Wegar\Basic\Interface;
 
 interface InitInterface
 {

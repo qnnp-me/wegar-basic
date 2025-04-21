@@ -1,6 +1,6 @@
 <?php
 
-namespace Wegar\Basic\helper;
+namespace Wegar\Basic\Helper;
 
 use Phinx\Console\PhinxApplication;
 use Phinx\Wrapper\TextWrapper;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Wegar\Basic\init;
+namespace Wegar\Basic\Init;
 
-use Wegar\Basic\abstract\InitAbstract;
-use Wegar\Basic\helper\PhinxHelper;
+use Wegar\Basic\Abstract\InitAbstract;
+use Wegar\Basic\Helper\PhinxHelper;
 
 class Phinx extends InitAbstract
 {

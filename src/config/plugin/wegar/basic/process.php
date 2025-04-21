@@ -1,6 +1,6 @@
 <?php
 
-use Wegar\Basic\process\InitProcess;
+use Wegar\Basic\Process\InitProcess;
 
 return [
   'init' => [

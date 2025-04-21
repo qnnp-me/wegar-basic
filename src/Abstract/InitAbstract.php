@@ -1,8 +1,8 @@
 <?php
 
-namespace Wegar\Basic\abstract;
+namespace Wegar\Basic\Abstract;
 
-use Wegar\Basic\interface\InitInterface;
+use Wegar\Basic\Interface\InitInterface;
 
 abstract class InitAbstract implements InitInterface
 {
