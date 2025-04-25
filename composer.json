@@ -17,5 +17,8 @@
     "psr-4": {
       "Wegar\\Basic\\": "src"
     }
+  },
+  "require-dev": {
+    "webman/database": "^2.1"
   }
 }

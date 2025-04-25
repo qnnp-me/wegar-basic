@@ -2,9 +2,9 @@
 
 namespace Wegar\Basic\Abstract;
 
-use Wegar\Basic\Interface\InitInterface;
-
-abstract class InitAbstract implements InitInterface
+abstract class InitAbstract
 {
   public int $weight = 10;
+
+  abstract public function run(): void;
 }
