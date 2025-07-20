@@ -4,6 +4,7 @@ namespace Wegar\Basic\Helper;
 
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use Throwable;
 use Wegar\Basic\Attribute\CronRule;
 use Workerman\Crontab\Crontab;
@@ -28,23 +29,29 @@ class CronHelper
           $command_helper->error("Load Crontab Failed: $class -> " . $e->getMessage());
           continue;
         }
-        $attrs = $method->getAttributes(CronRule::class);
-        $is_static = $method->isStatic();
-        foreach ($attrs as $attr) {
-          $rule = $attr->getArguments()[0] ?? false;
-          if ($rule) {
-            try {
-              new Crontab($rule, [$is_static ? $class : $ref->newInstance(), 'run']);
-              $rule_str = str_pad($rule, 20, ' ', STR_PAD_BOTH);
-              $command_helper->info("Crontab: [$rule_str] <- $class");
-            } catch (Throwable $e) {
-              $command_helper->error("Add Crontab Failed: $class -> " . $e->getMessage());
-            }
-          }
-        }
+        static::process_attrs($class, $ref, $method);
       }
     }
     $command_helper->info("Crontab loaded -> " . str_replace(base_path(), '', $cron_dir));
+  }
 
+  static function process_attrs($class, $ref, ReflectionMethod $method): void
+  {
+    $command_helper = new CommandHelper();
+
+    $attrs = $method->getAttributes(CronRule::class);
+    $is_static = $method->isStatic();
+    foreach ($attrs as $attr) {
+      $rule = $attr->getArguments()[0] ?? false;
+      if ($rule) {
+        try {
+          new Crontab($rule, [$is_static ? $class : $ref->newInstance(), 'run']);
+          $rule_str = str_pad($rule, 20, ' ', STR_PAD_BOTH);
+          $command_helper->info("Crontab: [$rule_str] <- $class");
+        } catch (Throwable $e) {
+          $command_helper->error("Add Crontab Failed: $class -> " . $e->getMessage());
+        }
+      }
+    }
   }
 }

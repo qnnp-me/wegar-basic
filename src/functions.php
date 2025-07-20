@@ -52,6 +52,9 @@ if (!function_exists('env')) {
   {
     $value = getenv($key);
     $value = $value === false ? $default : $value;
+    if ($value && preg_match('/\A([\'"])(.*)\1\z/', $value, $matches)) {
+      $value = $matches[2];
+    }
     $value = match ($value) {
       'true', '(true)'   => true,
       'false', '(false)' => false,
@@ -60,9 +63,6 @@ if (!function_exists('env')) {
       default            => $value,
     };
 
-    if (preg_match('/\A([\'"])(.*)\1\z/', $value, $matches)) {
-      return $matches[2];
-    }
 
     return $value;
   }

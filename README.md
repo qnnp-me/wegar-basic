@@ -82,6 +82,8 @@ return [
 
 ## Cron任务自动加载 <a name="load-cron"></a>
 
+需要预先安装：Crontab定时任务组件 -> `composer require workerman/crontab`
+
 在`app/cron`文件夹下以`类名.php`形式创建Cron任务类，并实现`run()`方法，该方法会在系统启动时自动执行。
 使用`Wegar\Basic\attribute\CronRule`对`run()`方法进行注解，以定义Cron规则。
 
