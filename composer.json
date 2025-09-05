@@ -20,8 +20,9 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^12.1",
+    "webman/admin": "^2.0",
     "webman/database": "^2.1",
-    "workerman/crontab": "^1.0",
-    "webman/admin": "^2.0"
+    "webman/redis-queue": "^2.1",
+    "workerman/crontab": "^1.0"
   }
 }

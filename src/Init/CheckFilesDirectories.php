@@ -2,6 +2,7 @@
 
 namespace Wegar\Basic\Init;
 
+use Dotenv\Dotenv;
 use Webman\RedisQueue\Process\Consumer;
 use Wegar\Basic\Abstract\InitAbstract;
 use Workerman\Crontab\Crontab;
@@ -18,27 +19,9 @@ class CheckFilesDirectories extends InitAbstract
     $this->checkAndCreatePhinxFiles();
   }
 
-  function checkDirs(): void
-  {
-    if (!is_dir(app_path('init'))) {
-      mkdir(app_path('init'), recursive: true);
-    }
-    if (class_exists(Crontab::class) && !is_dir(app_path('cron'))) {
-      mkdir(app_path('cron'), recursive: true);
-    }
-    foreach (config('plugin.webman.redis-queue.process', []) as $name => $config) {
-      if (
-        config("plugin.webman.redis-queue.process.$name.handler") === Consumer::class
-        && !is_dir(config("plugin.webman.redis-queue.process.$name.constructor.consumer_dir", ''))
-      ) {
-        mkdir(config("plugin.webman.redis-queue.process.$name.constructor.consumer_dir", ''), recursive: true);
-      }
-    }
-  }
-
   function checkEnvExample(): void
   {
-    if (class_exists(\Dotenv\Dotenv::class) && !file_exists(base_path(".env.example"))) {
+    if (class_exists(Dotenv::class) && !file_exists(base_path(".env.example"))) {
       file_put_contents(run_path(".env.example"), /** @lang dotenv */ "
 DEBUG=true
 
@@ -79,6 +62,25 @@ REDIS_PORT=6379
 # 权限类型文件保存地址，仅用于开发
 # PERMISSION_TYPES_SAVE_PATH=
 ");
+    }
+  }
+
+  function checkDirs(): void
+  {
+    if (!is_dir(app_path('init'))) {
+      mkdir(app_path('init'), recursive: true);
+    }
+    if (class_exists(Crontab::class) && !is_dir(app_path('cron'))) {
+      mkdir(app_path('cron'), recursive: true);
+    }
+    foreach (config('plugin.webman.redis-queue.process', []) as $name => $config) {
+      if (
+        class_exists(Consumer::class)
+        && config("plugin.webman.redis-queue.process.$name.handler") === Consumer::class
+        && !is_dir(config("plugin.webman.redis-queue.process.$name.constructor.consumer_dir", ''))
+      ) {
+        mkdir(config("plugin.webman.redis-queue.process.$name.constructor.consumer_dir", ''), recursive: true);
+      }
     }
   }
 

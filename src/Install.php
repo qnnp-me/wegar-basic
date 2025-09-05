@@ -2,6 +2,8 @@
 
 namespace Wegar\Basic;
 
+use Wegar\Basic\Init\CheckFilesDirectories;
+
 class Install
 {
   const WEBMAN_PLUGIN = true;
@@ -13,11 +15,11 @@ class Install
   public static function install(): void
   {
     static::installByRelation();
-  }
 
-  public static function uninstall(): void
-  {
-    self::uninstallByRelation();
+    $fileChecker = new CheckFilesDirectories();
+    $fileChecker->checkDirs();
+    $fileChecker->checkEnvExample();
+    $fileChecker->checkAndCreatePhinxFiles();
   }
 
   public static function installByRelation(): void
@@ -34,6 +36,11 @@ class Install
       echo "Create $dest
 ";
     }
+  }
+
+  public static function uninstall(): void
+  {
+    self::uninstallByRelation();
   }
 
   public static function uninstallByRelation(): void
