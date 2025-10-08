@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Phinx extends Command
 {
   protected static $defaultName = 'phinx';
-  protected static $defaultDescription = 'Phinx 命令，如果运行在 phar 包中，则之能使用 migrate 和 rollback 命令并且不带参数。';
+  protected static $defaultDescription = 'Phinx 命令，如果运行在 phar 包中，则只能使用 migrate 和 rollback 命令并且不带参数。';
 
   protected function configure()
   {
