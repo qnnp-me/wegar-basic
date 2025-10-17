@@ -36,6 +36,7 @@ class InitHelper
     }
     if (self::$results) {
       $command_helper->notice(self::$results);
+      self::$results = [];
     }
     $command_helper->info('Init Finished -> ' . $relative_dir . ':' . $namespace);
   }
