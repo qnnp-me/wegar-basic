@@ -21,7 +21,11 @@ if (!function_exists('json_error')) {
         'rawBuffer' => request()->rawBuffer()
       ];
     }
-    return json($result, $options)->withStatus(($code >= 100 && $code < 600) ? $code : 500);
+    $response = json($result, $options);
+    if (config('app.error_with_status', false)) {
+      return $response->withStatus(($code >= 100 && $code < 600) ? $code : 500);
+    }
+    return $response;
   }
 }
 if (!function_exists('json_success')) {

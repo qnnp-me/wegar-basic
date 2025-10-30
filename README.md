@@ -129,17 +129,26 @@ class Foo {
   ],
   ...
 ```
+
 </details>
 
 [//]: # (## 远程 组件/APP 加载规则)
 
 [//]: # ()
+
 [//]: # (使用 `\Wegar\Basic\helper\RouteHelper::registerComponent` 注册远程组件)
 
 [//]: # ()
+
 [//]: # (- `RouteHelper::registerComponent&#40;name: 'test-page', component_file_path: '...', need_base_url: true&#41;`)
 
 [//]: # (    - 前端访问 `/test-page{remaining_path: .*}` 可直接渲染远程组件/APP)
+
+## 配置项
+
+> `app.permission_types_save_path`: 权限类型保存路径（默认不设置，即不产生权限类型文件）
+>
+> `app.error_with_status`: 错误响应是否影响HTTP状态码（默认为 false ）
 
 ## 注意
 
