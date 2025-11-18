@@ -29,13 +29,13 @@ class Phinx extends Command
       $config_path = base_path('phinx.php');
       $wrap = new TextWrapper($app);
       $wrap->setOption('configuration', $config_path);
-      // return $wrap->getApp()->doRun(new ArgvInput([...$argv]), $output);
       print match ($argv[1] ?? '') {
         'm', 'migrate'  => $wrap->getMigrate(),
         'r', 'rollback' => $wrap->getRollback(),
       };
       return $wrap->getExitCode();
     } else {
+      $argv[0] = 'phinx';
       return (new PhinxApplication())->doRun(new ArgvInput($argv), $output);
     }
   }
