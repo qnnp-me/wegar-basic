@@ -106,6 +106,9 @@ if (class_exists("Dotenv\\Dotenv") && file_exists(base_path(false) . "/.env")) {
     Dotenv::createMutable(base_path(false))->load();
   }
 }
+
+// phinx 配置文档: https://book.cakephp.org/phinx/0/en/configuration.html
+
 return [
   "paths"        => [
     "migrations" => is_phar() ? runtime_path("phinx/database/migrations") : base_path("database/migrations"),
@@ -124,7 +127,12 @@ return [
       "charset"   => "utf8mb4",
       "collation" => "utf8mb4_general_ci",
     ],
-  ]
+  ],
+  "feature_flags" => [
+    "add_timestamps_use_datetime" => true,
+    "column_null_default"         => true,
+    "unsigned_primary_keys"       => true,
+  ],
 ];'
       );
     }
