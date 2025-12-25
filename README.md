@@ -153,6 +153,10 @@ class Foo {
 ## 注意
 
 - 将会需要并申明以下函数
-    - `json_success` json success 响应
-    - `json_error` json err 响应
-    - `ss` 用于 session 快捷管理，通过修改 `config/plugin/wegar/basic/helper/SessionHelper.php` 增加自定义 session 名称和方法
+  - `json_success` json success 响应
+  - `json_error` json err 响应
+  - `ss` 用于 session 快捷管理，通过修改 `config/plugin/wegar/basic/helper/SessionHelper.php` 增加自定义 session
+
+## TODO
+
+- 添加针对 `.env` 文件的项目优化命令，用于自动处理相关配置文件以使用 `.env` 文件
