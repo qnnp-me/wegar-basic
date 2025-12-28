@@ -15,6 +15,10 @@
     "workerman/webman-framework": "^1.6|^2.1"
   },
   "autoload": {
+    "files": [
+      "src/functions_psr.php",
+      "src/functions.php"
+    ],
     "psr-4": {
       "Wegar\\Basic\\": "src"
     }

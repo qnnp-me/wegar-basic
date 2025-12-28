@@ -96,17 +96,6 @@ REDIS_PORT=6379
     if (!file_exists($phinx_file)) {
       file_put_contents($phinx_file,
         '<?php
-
-use Dotenv\Dotenv;
-
-if (class_exists("Dotenv\\Dotenv") && file_exists(base_path(false) . "/.env")) {
-  if (method_exists("Dotenv\\Dotenv", "createUnsafeMutable")) {
-    Dotenv::createUnsafeMutable(base_path(false))->load();
-  } else {
-    Dotenv::createMutable(base_path(false))->load();
-  }
-}
-
 // phinx 配置文档: https://book.cakephp.org/phinx/0/en/configuration.html
 
 return [
@@ -119,11 +108,11 @@ return [
     "default_environment"     => "default",
     "default"                 => [
       "adapter"   => "mysql",
-      "host"      => env("MYSQL_HOST"),
-      "name"      => env("MYSQL_DBNAME"),
-      "user"      => env("MYSQL_USER"),
-      "pass"      => env("MYSQL_PASSWORD"),
-      "port"      => env("MYSQL_PORT", "3306"),
+      "host"      => \Wegar\Basic\env("MYSQL_HOST"),
+      "name"      => \Wegar\Basic\env("MYSQL_DBNAME"),
+      "user"      => \Wegar\Basic\env("MYSQL_USER"),
+      "pass"      => \Wegar\Basic\env("MYSQL_PASSWORD"),
+      "port"      => \Wegar\Basic\env("MYSQL_PORT", 3306),
       "charset"   => "utf8mb4",
       "collation" => "utf8mb4_general_ci",
     ],
