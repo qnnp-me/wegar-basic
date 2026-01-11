@@ -95,8 +95,19 @@ REDIS_PORT=6379
     }
     if (!file_exists($phinx_file)) {
       file_put_contents($phinx_file,
-        '<?php
+        <<<PHP
+<?php
 // phinx 配置文档: https://book.cakephp.org/phinx/0/en/configuration.html
+
+use Dotenv\Dotenv;
+
+if (class_exists('Dotenv\Dotenv') && file_exists(base_path(false) . '/.env')) {
+  if (method_exists('Dotenv\Dotenv', 'createUnsafeMutable')) {
+    Dotenv::createUnsafeMutable(base_path(false))->load();
+  } else {
+    Dotenv::createMutable(base_path(false))->load();
+  }
+}
 
 return [
   "paths"        => [
@@ -122,7 +133,9 @@ return [
     "column_null_default"         => true,
     "unsigned_primary_keys"       => true,
   ],
-];'
+];
+PHP
+
       );
     }
   }
