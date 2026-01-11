@@ -22,7 +22,7 @@ class PermissionTSGenerator extends InitAbstract
 
   function generate_type_content(): string
   {
-    if (!class_exists(Rule::class)) return '';
+    if (!class_exists(Rule::class) || !config('plugin.admin.database.default')) return '';
     $keys = Rule::select(['key'])->pluck('key');
     $date = date('Y-m-d H:i:s');
     $permissions = <<<TS
