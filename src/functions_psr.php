@@ -57,14 +57,18 @@ function env($key, $default = null)
     $value = $matches[2];
   }
   $value = match ($value) {
-    'true', '(true)' => true,
+    'true', '(true)'   => true,
     'false', '(false)' => false,
     'empty', '(empty)' => '',
-    'null', '(null)' => null,
-    default => $value,
+    'null', '(null)'   => null,
+    default            => $value,
   };
   if (is_string($value)) {
-    if ((str_starts_with($value, '[') && str_ends_with($value, ']')) || (str_starts_with($value, '{') && str_ends_with($value, '}'))) {
+    if (
+      (
+        str_starts_with($value, '[') && str_ends_with($value, ']') && !filter_var(substr($value, 1, -1), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+      )
+      || (str_starts_with($value, '{') && str_ends_with($value, '}'))) {
       $value = json_decode($value, true);
     }
   }
@@ -72,7 +76,7 @@ function env($key, $default = null)
     $value = match (true) {
       str_contains($value, '.') => (float)$value,
       str_contains($value, 'e') => (float)$value,
-      default => (int)$value,
+      default                   => (int)$value,
     };
   }
   return $value;

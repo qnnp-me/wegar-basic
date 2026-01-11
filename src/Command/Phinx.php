@@ -11,8 +11,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Phinx extends Command
 {
-  protected static $defaultName = 'phinx';
-  protected static $defaultDescription = 'Phinx 命令，如果运行在 phar 包中，则只能使用 migrate 和 rollback 命令并且不带参数。';
+  protected static string $defaultName = 'phinx';
+  protected static string $defaultDescription = 'Phinx 命令，如果运行在 phar 包中，则只能使用 migrate 和 rollback 命令并且不带参数。';
 
   protected function configure()
   {
@@ -30,7 +30,7 @@ class Phinx extends Command
       $wrap = new TextWrapper($app);
       $wrap->setOption('configuration', $config_path);
       print match ($argv[1] ?? '') {
-        'm', 'migrate'  => $wrap->getMigrate(),
+        'm', 'migrate' => $wrap->getMigrate(),
         'r', 'rollback' => $wrap->getRollback(),
       };
       return $wrap->getExitCode();
