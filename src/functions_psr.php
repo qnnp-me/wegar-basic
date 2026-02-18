@@ -57,11 +57,11 @@ function env($key, $default = null)
     $value = $matches[2];
   }
   $value = match ($value) {
-    'true', '(true)'   => true,
+    'true', '(true)' => true,
     'false', '(false)' => false,
     'empty', '(empty)' => '',
-    'null', '(null)'   => null,
-    default            => $value,
+    'null', '(null)' => null,
+    default => $value,
   };
   if (is_string($value)) {
     if (
@@ -76,8 +76,28 @@ function env($key, $default = null)
     $value = match (true) {
       str_contains($value, '.') => (float)$value,
       str_contains($value, 'e') => (float)$value,
-      default                   => (int)$value,
+      default => (int)$value,
     };
   }
   return $value;
+}
+
+function getAllFiles(string $abs_path): array
+{
+  $list = [];
+  if (file_exists($abs_path) && is_dir($abs_path)) {
+    $dir = opendir($abs_path);
+    while (false !== ($file = readdir($dir))) {
+      if ($file != "." && $file != "..") {
+        if (is_dir($abs_path . "/" . $file)) {
+          $list = array_merge($list, \Wegar\Basic\getAllFiles($abs_path . "/" . $file));
+        } else {
+          $list[] = $abs_path . "/" . $file;
+        }
+      }
+    }
+  } else {
+    $list[] = $abs_path;
+  }
+  return $list;
 }

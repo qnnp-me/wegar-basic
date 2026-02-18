@@ -22,7 +22,8 @@ class CheckFilesDirectories extends InitAbstract
   function checkEnvExample(): void
   {
     if (class_exists(Dotenv::class) && !file_exists(base_path(".env.example"))) {
-      file_put_contents(run_path(".env.example"), /** @lang dotenv */ "
+      file_put_contents(run_path(".env.example"), <<<DOTENV
+ENV=dev
 DEBUG=true
 
 # PROJECT_NAME 应该和同系统中的其他项目保持不一致
@@ -55,13 +56,15 @@ REDIS_PORT=6379
 # BUILD_BIN_FILENAME=webman.bin
 # BUILD_EXCLUDE_PATTERN=#^(?!.*(composer.json|/.github/|/.idea/|/.git/|/.setting/|/runtime/|/vendor-bin/|/build/|/vendor/webman/admin/))(.*)$#
 # BUILD_EXCLUDE_FILES=.env,LICENSE,composer.json,composer.lock,start.php,webman.phar,webman.bin
-# BUILD_CUSTOM_INI=\"
+# BUILD_CUSTOM_INI="
 # memory_limit = 256M
-# \"
+# "
 
 # 权限类型文件保存地址，仅用于开发
 # PERMISSION_TYPES_SAVE_PATH=
-");
+
+DOTENV
+      );
     }
   }
 

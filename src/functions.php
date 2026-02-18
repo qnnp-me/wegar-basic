@@ -22,9 +22,15 @@ if (!function_exists('ss')) {
   }
 }
 
-if (!function_exists('env')) {
+if (!function_exists('getAllFiles')) {
   function env($key, $default = null)
   {
     return \Wegar\Basic\env($key, $default);
+  }
+}
+if (!function_exists('getAllFiles')) {
+  function getAllFiles($abs_path): array
+  {
+    return \Wegar\Basic\getAllFiles($abs_path);
   }
 }
