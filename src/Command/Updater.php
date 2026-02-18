@@ -170,12 +170,12 @@ class Updater extends Command
 
   protected function getTargetPath()
   {
-    return base_path('plugin/admin');
+    return base_path('config/plugin/wegar/basic');
   }
 
   protected function getSourcePath()
   {
-    return base_path('vendor/webman/admin/src/plugin/admin');
+    return base_path('vendor/wegar/basic/src/config/plugin/wegar/basic');
   }
 
   protected function delOldFile($file): bool
