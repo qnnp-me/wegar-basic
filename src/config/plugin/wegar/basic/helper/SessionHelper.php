@@ -3,6 +3,7 @@
 namespace config\plugin\wegar\basic\helper;
 
 use Exception;
+use Wegar\Basic\Helper\DTO;
 
 /**
  * session 管理模块
@@ -14,6 +15,7 @@ class SessionHelper
   protected static SessionHelper $instance;
 
   public mixed $some_session_name;
+  public mixed $some_dto_session_name = 'dto';
 
   public static function getInstance(): SessionHelper
   {
@@ -48,6 +50,10 @@ class SessionHelper
     if (!in_array($method, $methods)) {
       throw new Exception("方法 $method 不被支持");
     }
-    return session()->{$method}($session_name, ...$arguments);
+    $result = session()->{$method}($session_name, ...$arguments);
+    if ($method === 'get' && $this->{$session_name} === 'dto' && is_array($result) && !array_is_list($result)) {
+      $result = new DTO($result);
+    }
+    return $result;
   }
 }

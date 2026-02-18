@@ -22,7 +22,7 @@ if (!function_exists('ss')) {
   }
 }
 
-if (!function_exists('getAllFiles')) {
+if (!function_exists('env')) {
   function env($key, $default = null)
   {
     return \Wegar\Basic\env($key, $default);
