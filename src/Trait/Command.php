@@ -15,16 +15,13 @@ trait Command
   protected InputInterface $input;
   protected OutputInterface $output;
   protected ConsoleColor $consoleColor;
-  protected \Symfony\Component\Console\Command\Command $commandHelper;
 
   public function __construct()
   {
-    $this->consoleColor = new ConsoleColor();
-    if (!(static::class instanceof \Symfony\Component\Console\Command\Command)) {
-      $this->commandHelper = new \Symfony\Component\Console\Command\Command();
-    } else {
-      $this->commandHelper = $this;
+    if (!is_subclass_of(static::class, \Symfony\Component\Console\Command\Command::class)) {
+      throw new \Exception('Command must be subclass of Symfony\Component\Console\Command\Command');
     }
+    $this->consoleColor = new ConsoleColor();
     parent::__construct();
   }
 
@@ -107,7 +104,7 @@ trait Command
   protected function alert(string $messages): void
   {
     /* @var QuestionHelper $helper */
-    $helper = $this->commandHelper->getHelper('question');
+    $helper = $this->getHelper('question');
     $this->write($this->color("⚠️ $messages", 160, 231), tag: "Alert", back: 160);
     $this->write(chr(7));
     $question = new ConfirmationQuestion(
@@ -119,7 +116,7 @@ trait Command
   protected function confirm(string $question, bool $default = false, $trueAnswerRegex = '/^y/ i'): bool
   {
     /* @var QuestionHelper $helper */
-    $helper = $this->commandHelper->getHelper('question');
+    $helper = $this->getHelper('question');
     $this->write(chr(7));
     $this->write("📝 $question", tag: "Confirm", back: 45);
     $q = $default ? 'Y/n' : 'y/N';
@@ -140,7 +137,7 @@ trait Command
   ): string
   {
     /* @var QuestionHelper $helper */
-    $helper = $this->commandHelper->getHelper('question');
+    $helper = $this->getHelper('question');
     $this->write("📝 $messages", tag: "Input  ", back: 45);
     $default_msg = $default ? "(D: $default) " : "";
     $question = new Question(
@@ -172,7 +169,7 @@ trait Command
   ): string
   {
     /* @var QuestionHelper $helper */
-    $helper = $this->commandHelper->getHelper('question');
+    $helper = $this->getHelper('question');
     $this->write("📋 $question", tag: "Select ", back: 45);
     $question = new ChoiceQuestion(
       ' ⭥ ⏎ : ',
