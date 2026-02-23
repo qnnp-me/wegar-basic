@@ -17,7 +17,7 @@ class SessionHelper
   public mixed $some_session_name;
   public mixed $some_dto_session_name = 'dto';
 
-  public static function getInstance(): SessionHelper
+  public static function getInstance(): static
   {
     if (!isset(static::$instance)) {
       static::$instance = new static();
