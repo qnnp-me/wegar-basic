@@ -19,7 +19,7 @@ function json_error(string $msg, int $code = 500, $data = null, int $options = J
     $result['debug'] = [
       'data'      => request()->all(),
       'header'    => request()->header(),
-      'rawBuffer' => request()->rawBuffer()
+      'rawBuffer' => request()->rawBuffer(),
     ];
   }
   $response = json($result, $options);

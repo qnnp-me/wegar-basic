@@ -5,5 +5,5 @@ use Wegar\Basic\Command\Updater;
 
 return [
   Phinx::class,
-  Updater::class
+  Updater::class,
 ];

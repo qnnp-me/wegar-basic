@@ -146,8 +146,6 @@ class Foo {
 
 ## 配置项
 
-> `app.permission_types_save_path`: 权限类型保存路径（默认不设置，即不产生权限类型文件）
->
 > `app.error_with_status`: 错误响应是否影响HTTP状态码（默认为 false ）
 
 ## 注意

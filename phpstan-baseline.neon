@@ -1,0 +1,31 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: src/Command/Phinx.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface\:\:ask\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/Command/Updater.php
+
+		-
+			message: '#^Call to function is_subclass_of\(\) with class\-string\<static\(Wegar\\Basic\\Command\\Updater\)\> and ''Symfony\\\\Component\\\\Console\\\\Command\\\\Command'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Trait/Command.php
+
+		-
+			message: '#^Method config\\plugin\\wegar\\basic\\helper\\SessionHelper\:\:getInstance\(\) should return static\(config\\plugin\\wegar\\basic\\helper\\SessionHelper\) but returns config\\plugin\\wegar\\basic\\helper\\SessionHelper\.$#'
+			identifier: return.type
+			count: 1
+			path: src/config/plugin/wegar/basic/helper/SessionHelper.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 1
+			path: src/config/plugin/wegar/basic/helper/SessionHelper.php

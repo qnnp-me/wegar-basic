@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "Webman plugin wegar/basic",
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.3",
     "monolog/monolog": "^2.10",
     "php-parallel-lint/php-console-color": "^1.0",
     "robmorgan/phinx": "^0.16",
@@ -24,10 +24,27 @@
       "Wegar\\Basic\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/",
+      "config\\": "src/config/"
+    }
+  },
   "require-dev": {
     "phpunit/phpunit": "^12.1",
-    "webman/admin": "^2.1|@dev",
     "webman/redis-queue": "^2.1",
-    "workerman/crontab": "^1.0"
+    "workerman/crontab": "^1.0",
+    "phpstan/phpstan": "^2.1",
+    "friendsofphp/php-cs-fixer": "^3.64"
+  },
+  "scripts": {
+    "test": "phpunit",
+    "analyse": "phpstan analyse --no-progress",
+    "lint": "php-cs-fixer fix --dry-run --diff",
+    "check": [
+      "@lint",
+      "@analyse",
+      "@test"
+    ]
   }
 }

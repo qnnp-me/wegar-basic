@@ -60,9 +60,6 @@ REDIS_PORT=6379
 # memory_limit = 256M
 # "
 
-# 权限类型文件保存地址，仅用于开发
-# PERMISSION_TYPES_SAVE_PATH=
-
 DOTENV
       );
     }
