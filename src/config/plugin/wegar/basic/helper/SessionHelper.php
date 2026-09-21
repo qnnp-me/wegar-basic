@@ -21,7 +21,7 @@ class SessionHelper
   public static function getInstance(): static
   {
     if (!isset(static::$instance)) {
-      static::$instance = new static(); // @phpstan-ignore new.static
+      static::$instance = new static(); // @phpstan-ignore new.static (无构造函数，子类可安全实例化)
     }
     return static::$instance;
   }

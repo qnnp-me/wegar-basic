@@ -29,11 +29,16 @@ class Phinx extends Command
       $config_path = base_path('phinx.php');
       $wrap = new TextWrapper($app);
       $wrap->setOption('configuration', $config_path);
-      print match ($argv[1] ?? '') {
+      $result = match ($argv[1] ?? '') {
         'm', 'migrate' => $wrap->getMigrate(),
         'r', 'rollback' => $wrap->getRollback(),
-        default => "Phar 环境仅支持 migrate 和 rollback 命令\n",
+        default => null,
       };
+      if ($result === null) {
+        print "Phar 环境仅支持 migrate 和 rollback 命令\n";
+        return Command::FAILURE;
+      }
+      print $result;
       return $wrap->getExitCode();
     } else {
       $argv[0] = 'phinx';

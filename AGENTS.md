@@ -11,7 +11,7 @@
 ## 关键约定（容易改错）
 
 - **配置类的命名空间故意不是 `Wegar\Basic`**：`src/config/plugin/wegar/basic/helper/SessionHelper.php` 用的是 `config\plugin\wegar\basic\helper`。`Install::install()` 会把 `src/config/plugin/wegar/basic` 整个复制到宿主项目的 `config/plugin/wegar/basic`（`Install.php:11`）。这里是给宿主项目**编辑扩展**的位置，不要把命名空间“修正”为 `Wegar\Basic`。
-- `SessionHelper` 通过动态 `__call` 代理：类上新增 `$some_session_name` 属性即注册一个可管理 session，方法名 = 属性名 + 动作（`get/set/put/pull/has/exists/forget/delete`，`SessionHelper.php:31`）。
+- `SessionHelper` 通过动态 `__call` 代理：类上新增 `$some_session_name` 属性即注册一个可管理 session，方法名 = 属性名 + 动作（`get/set/put/pull/has/exists/forget/delete`，`SessionHelper.php:32`）。
 - README 中的 `Wegar\Basic\attribute\CronRule` 是笔误，实际是 **`Wegar\Basic\Attribute\CronRule`**（区分大小写）。
 - `Command/Trait\Command.php` 与 `Helper/CommandHelper.php` 是两套高度重复的输出实现（Symfony Command 用前者，进程内日志用后者）。改一处时注意另一处。
 
@@ -29,7 +29,7 @@
 统一质量入口（本仓库有 composer scripts）：
 
 - 全量检查：`composer check`（= `lint` → `analyse` → `test`）
-- 单测：`composer test`（PHPUnit 12，`tests/Unit`，26 例）
+- 单测：`composer test`（PHPUnit 12，`tests/Unit`）
 - 静态分析：`composer analyse`（PHPStan level 5，**无 baseline**，任何报错都需当次修复）
 - 风格：`composer lint`（PHP-CS-Fixer `--dry-run`，规则故意保持轻量、兼容 2 空格缩进）
 - 单项语法检查：`php -l <file>`；依赖安装：`composer install`
