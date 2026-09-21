@@ -19,6 +19,11 @@ class CommandHelper
   protected OutputInterface $output;
   protected ConsoleColor $consoleColor;
 
+  /**
+   * 静默模式：为 true 时所有输出被抑制（如测试中调用初始化脚本时）
+   */
+  public static bool $quiet = false;
+
   function __construct()
   {
     $this->consoleColor = new ConsoleColor();
@@ -90,6 +95,9 @@ class CommandHelper
 
   function write(string|iterable $messages, bool $newline = false, int $options = 0, ?string $tag = null, $front = 231, $back = 240): void
   {
+    if (self::$quiet) {
+      return;
+    }
     $indent = '';
     if ($tag) {
       $now = date('Y-m-d H:i:s');

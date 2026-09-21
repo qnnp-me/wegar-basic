@@ -30,7 +30,7 @@
 
 - 全量检查：`composer check`（= `lint` → `analyse` → `test`）
 - 单测：`composer test`（PHPUnit 12，`tests/Unit`，26 例）
-- 静态分析：`composer analyse`（PHPStan level 5，历史问题在 `phpstan-baseline.neon`；新错误需修复，不要往 baseline 里塞）
+- 静态分析：`composer analyse`（PHPStan level 5，**无 baseline**，任何报错都需当次修复）
 - 风格：`composer lint`（PHP-CS-Fixer `--dry-run`，规则故意保持轻量、兼容 2 空格缩进）
 - 单项语法检查：`php -l <file>`；依赖安装：`composer install`
 - 测试无自定义桩：`tests/bootstrap.php` 只加载 composer autoload；webman helper 与 `support\Response|Model` 由硬依赖真实提供，直接使用即可。

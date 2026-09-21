@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Tests\Fixtures\Init\Recorder;
+use Wegar\Basic\Helper\CommandHelper;
 use Wegar\Basic\Helper\InitHelper;
 
 class InitHelperTest extends TestCase
@@ -14,6 +15,12 @@ class InitHelperTest extends TestCase
     InitHelper::$results = [];
     InitHelper::$namespace = '';
     InitHelper::$relative_dir = '';
+    CommandHelper::$quiet = true;
+  }
+
+  protected function tearDown(): void
+  {
+    CommandHelper::$quiet = false;
   }
 
   public function testWeightOrderingLowerFirst(): void
@@ -21,12 +28,7 @@ class InitHelperTest extends TestCase
     $dir = __DIR__ . '/../Fixtures/Init';
     $this->assertDirectoryExists($dir);
 
-    ob_start();
-    try {
-        InitHelper::load($dir);
-    } finally {
-        ob_end_clean();
-    }
+    InitHelper::load($dir);
 
     $this->assertSame(['Beta', 'Alpha'], Recorder::$order);
   }
@@ -35,12 +37,7 @@ class InitHelperTest extends TestCase
   {
     $dir = __DIR__ . '/../Fixtures/Init';
 
-    ob_start();
-    try {
-        InitHelper::load($dir);
-    } finally {
-        ob_end_clean();
-    }
+    InitHelper::load($dir);
 
     $this->assertSame('\\Tests\\Fixtures\\Init', InitHelper::$namespace);
   }

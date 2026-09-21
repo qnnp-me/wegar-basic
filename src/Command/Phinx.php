@@ -32,6 +32,7 @@ class Phinx extends Command
       print match ($argv[1] ?? '') {
         'm', 'migrate' => $wrap->getMigrate(),
         'r', 'rollback' => $wrap->getRollback(),
+        default => "Phar 环境仅支持 migrate 和 rollback 命令\n",
       };
       return $wrap->getExitCode();
     } else {

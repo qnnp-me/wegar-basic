@@ -12,7 +12,8 @@ use Wegar\Basic\Helper\DTO;
  */
 class SessionHelper
 {
-  protected static SessionHelper $instance;
+  /** @var static|null */
+  protected static ?SessionHelper $instance = null;
 
   public mixed $some_session_name;
   public mixed $some_dto_session_name = 'dto';
@@ -20,7 +21,7 @@ class SessionHelper
   public static function getInstance(): static
   {
     if (!isset(static::$instance)) {
-      static::$instance = new static();
+      static::$instance = new static(); // @phpstan-ignore new.static
     }
     return static::$instance;
   }
