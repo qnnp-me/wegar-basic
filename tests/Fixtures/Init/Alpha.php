@@ -2,7 +2,9 @@
 
 namespace Tests\Fixtures\Init;
 
-class Alpha
+use Wegar\Basic\Abstract\InitAbstract;
+
+class Alpha extends InitAbstract
 {
   public int $weight = 20;
 

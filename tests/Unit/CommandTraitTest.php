@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use PHP_Parallel_Lint\PhpConsoleColor\ConsoleColor;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -54,6 +56,36 @@ class TraitHost extends SymfonyCommand
     return $this->input($messages);
   }
 
+  public function exposeNotice(string $m): void
+  {
+    $this->notice($m);
+  }
+
+  public function exposeWarning(string $m): void
+  {
+    $this->warning($m);
+  }
+
+  public function exposeError(string $m): void
+  {
+    $this->error($m);
+  }
+
+  public function exposeFailed(string $m): void
+  {
+    $this->failed($m);
+  }
+
+  public function exposeBgColor(string $s, int $c): string
+  {
+    return $this->bgColor($s, $c);
+  }
+
+  public function exposeAlert(string $m): void
+  {
+    $this->alert($m);
+  }
+
   public function io(string $input, BufferedOutput $output): void
   {
     $stream = fopen('php://memory', 'r+');
@@ -66,6 +98,11 @@ class TraitHost extends SymfonyCommand
     $this->output = $output;
     $this->setHelperSet(new HelperSet([new QuestionHelper()]));
   }
+}
+
+class TraitAbuser
+{
+  use CommandTrait;
 }
 
 class CommandTraitTest extends TestCase
@@ -82,7 +119,11 @@ class CommandTraitTest extends TestCase
 
   public function testColorContainsText(): void
   {
-    $this->assertStringContainsString('x', (new TraitHost())->exposeColor('x', 231));
+    $host = new TraitHost();
+    $this->forceStyle($host);
+    $out = $host->exposeColor('x', 231);
+    $this->assertStringContainsString('x', $out);
+    $this->assertMatchesRegularExpression('/\x1b\[[0-9;]+m/', $out);
   }
 
   public function testWriteEmitsMessage(): void
@@ -132,5 +173,47 @@ class CommandTraitTest extends TestCase
     $host = new TraitHost();
     $host->io('hello', new BufferedOutput());
     $this->assertSame('hello', $host->exposeInput('name?'));
+  }
+
+  public function testConstructorGuardRejectsNonCommand(): void
+  {
+    $this->expectException(\Exception::class);
+    new TraitAbuser();
+  }
+
+  public function testNoticeWarningErrorFailedEmit(): void
+  {
+    $host = new TraitHost();
+    $out = new BufferedOutput();
+    $host->io('', $out);
+    foreach (['notice', 'warning', 'error', 'failed'] as $m) {
+      $host->{'expose' . ucfirst($m)}('t-' . $m);
+      $this->assertStringContainsString('t-' . $m, $out->fetch());
+    }
+  }
+
+  public function testBgColorWrapsText(): void
+  {
+    $host = new TraitHost();
+    $this->forceStyle($host);
+    $out = $host->exposeBgColor('bg', 240);
+    $this->assertStringContainsString('bg', $out);
+    $this->assertMatchesRegularExpression('/\x1b\[[0-9;]+m/', $out);
+  }
+
+  public function testAlertEmitsMessage(): void
+  {
+    $host = new TraitHost();
+    $out = new BufferedOutput();
+    $host->io("\n", $out);
+    $host->exposeAlert('watch out');
+    $this->assertStringContainsString('watch out', $out->fetch());
+  }
+
+  private function forceStyle(TraitHost $host): void
+  {
+    $color = new ConsoleColor();
+    $color->setForceStyle(true);
+    (new ReflectionProperty(TraitHost::class, 'consoleColor'))->setValue($host, $color);
   }
 }

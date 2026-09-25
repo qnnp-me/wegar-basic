@@ -84,4 +84,48 @@ class EnvTest extends TestCase
     $this->setEnv('FOO', '42');
     $this->assertSame(42, \Wegar\Basic\env('FOO'));
   }
+
+  public function testScientificNotationIsFloat(): void
+  {
+    $this->setEnv('FOO', '1e3');
+    $this->assertSame(1000.0, \Wegar\Basic\env('FOO'));
+  }
+
+  public function testParenthesizedNullAndEmpty(): void
+  {
+    $this->setEnv('FOO', '(null)');
+    $this->assertNull(\Wegar\Basic\env('FOO'));
+    $this->setEnv('BAR', '(empty)');
+    $this->assertSame('', \Wegar\Basic\env('BAR'));
+  }
+
+  public function testSingleQuotedString(): void
+  {
+    $this->setEnv('FOO', "'single'");
+    $this->assertSame('single', \Wegar\Basic\env('FOO'));
+  }
+
+  public function testNestedJsonObject(): void
+  {
+    $this->setEnv('FOO', '{"a":{"b":2}}');
+    $this->assertSame(['a' => ['b' => 2]], \Wegar\Basic\env('FOO'));
+  }
+
+  public function testUnterminatedBracketStaysString(): void
+  {
+    $this->setEnv('FOO', '[1,2');
+    $this->assertSame('[1,2', \Wegar\Basic\env('FOO'));
+  }
+
+  public function testPlainStringUnchanged(): void
+  {
+    $this->setEnv('FOO', 'hello');
+    $this->assertSame('hello', \Wegar\Basic\env('FOO'));
+  }
+
+  public function testNegativeInt(): void
+  {
+    $this->setEnv('FOO', '-7');
+    $this->assertSame(-7, \Wegar\Basic\env('FOO'));
+  }
 }

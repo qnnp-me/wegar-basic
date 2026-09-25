@@ -2,8 +2,9 @@ name: quality
 on:
   push:
   pull_request:
+
 jobs:
-  check:
+  unit:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -14,6 +15,30 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          coverage: none
+          coverage: pcov
       - run: composer install --no-interaction --prefer-dist
-      - run: composer check
+      - run: composer validate --strict
+      - run: composer lint
+      - run: composer analyse
+      # 单测仅跑一次：test:coverage 内含 phpunit，避免 check 后再重复跑一套（BL-006）
+      - run: composer test:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-${{ matrix.php }}
+          path: build/coverage/clover.xml
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+      - uses: actions/cache@v4
+        with:
+          path: .webman-host
+          key: webman-host-${{ hashFiles('composer.lock', 'tests/Tools/HostApp.php') }}
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer host:setup
+      - run: composer test:integration

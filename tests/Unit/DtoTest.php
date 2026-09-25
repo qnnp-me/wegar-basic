@@ -66,4 +66,44 @@ class DtoTest extends TestCase
     $this->expectException(LogicException::class);
     unset($dto['a']);
   }
+
+  public function testMissingKeyReturnsNull(): void
+  {
+    $dto = new DTO(['a' => 1]);
+    $this->assertNull($dto->missing);
+    $this->assertNull($dto['missing']);
+  }
+
+  public function testNestedListStaysArray(): void
+  {
+    $dto = new DTO(['list' => [1, 2, 3]]);
+    $this->assertSame([1, 2, 3], $dto->list);
+  }
+
+  public function testOffsetExistsUsesIssetSemantics(): void
+  {
+    $dto = new DTO(['a' => 1, 'b' => null]);
+    $this->assertTrue(isset($dto['a']));
+    $this->assertFalse(isset($dto['b']));
+  }
+
+  public function testNestedAssocViaArrayAccessReturnsDto(): void
+  {
+    $dto = new DTO(['n' => ['x' => 1]]);
+    $this->assertInstanceOf(DTO::class, $dto['n']);
+  }
+
+  public function testDeeplyNestedAssocResolvedRecursively(): void
+  {
+    $dto = new DTO(['a' => ['b' => ['c' => 3]]]);
+    $this->assertInstanceOf(DTO::class, $dto->a);
+    $this->assertInstanceOf(DTO::class, $dto->a->b);
+    $this->assertSame(3, $dto->a->b->c);
+  }
+
+  public function testJsonEncodeUsesRawData(): void
+  {
+    $dto = new DTO(['a' => 1]);
+    $this->assertSame('{"a":1}', json_encode($dto));
+  }
 }
