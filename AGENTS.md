@@ -30,7 +30,7 @@
 
 - 全量检查：`composer check`（= `composer validate --strict` → `lint` → `analyse` → `test`）
 - 单测：`composer test`（PHPUnit 12，`tests/Unit`）
-- 覆盖率（严格门禁）：`composer test:coverage`（pcov + clover 阈值，当前 **47%**，实测基线 48.08%；CI 与本地一致拦截）。本机静态 PHP 无 pcov 时需先 `brew install php` 再 `pecl install pcov`
+- 覆盖率（严格门禁）：`composer test:coverage`（pcov + clover 阈值，当前 **47%**，实测基线 48.75%；CI 与本地一致拦截）。本机静态 PHP 无 pcov 时需先 `brew install php` 再 `pecl install pcov`
 - 静态分析：`composer analyse`（PHPStan level 5，**无 baseline**，任何报错都需当次修复）
 - 风格：`composer lint`（PHP-CS-Fixer `--dry-run`，规则故意保持轻量、兼容 2 空格缩进）
 - 单项语法检查：`php -l <file>`；依赖安装：`composer install`

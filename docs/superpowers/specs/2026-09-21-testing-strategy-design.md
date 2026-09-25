@@ -106,7 +106,7 @@
 
 ### L4 覆盖率
 - 安装 **pcov**（本地 + CI，较 xdebug 快），`phpunit --coverage-clover`（Codecov）+ `--coverage-text`。
-- 阈值：**先跑基线**再设门槛。2026-09-25 实测基线：`src` 行覆盖 **48.08%（288/599）**（`src/config` 已排除）。当前 `composer test:coverage` 门禁阈值 **47%**（`.github/workflows/quality.yml` 已移除 `continue-on-error`，CI 真拦截）；梯度目标维持 `src` 行覆盖 ≥85%、核心 Helper（DTO/InitHelper/CommandHelper）≥95%，随测试补齐逐步抬高。
+- 阈值：**先跑基线**再设门槛。2026-09-25 实测基线：`src` 行覆盖 **48.75%**（`src/config` 已排除）。当前 `composer test:coverage` 门禁阈值 **47%**（`.github/workflows/quality.yml` 已移除 `continue-on-error`，CI 真拦截）；梯度目标维持 `src` 行覆盖 ≥85%、核心 Helper（DTO/InitHelper/CommandHelper）≥95%，随测试补齐逐步抬高。
 - `<source>`/`<exclude>`：排除 `src/config/**` 及 phar 等不可达分支（显式列明理由）。
 - **门禁现状（2026-09-25）**：`continue-on-error` 已移除，CI 与本地 `composer test:coverage` 同为严格门禁；阈值 47% 由实测基线校准，随覆盖提升再抬。CI 不再重复跑单测（`test:coverage` 内含 phpunit；BL-006）。本机容器为静态 PHP，安装 pcov 需 `brew install php` + `pecl install pcov`（无 pecl/phpize 时无法采集）。
 
