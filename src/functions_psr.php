@@ -75,7 +75,7 @@ function env($key, $default = null)
   if (is_string($value) && is_numeric($value)) {
     $value = match (true) {
       str_contains($value, '.') => (float)$value,
-      str_contains($value, 'e') => (float)$value,
+      stripos($value, 'e') !== false => (float)$value,
       default => (int)$value,
     };
   }

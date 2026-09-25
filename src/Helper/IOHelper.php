@@ -18,11 +18,11 @@ class IOHelper
   {
     $command_helper = new CommandHelper();
     static $phar;
-    if (!$phar) {
-      $phar = new Phar(Phar::running());
-    }
     try {
       if (is_phar()) {
+        if (!$phar) {
+          $phar = new Phar(Phar::running());
+        }
         if (!file_exists($to)) {
           mkdir($to, recursive: true);
         }
@@ -33,7 +33,7 @@ class IOHelper
         $phar->extractTo($to, $from, $overwrite);
         $command_helper->info("Release $from to $to");
       }
-    } catch (\Exception $e) {
+    } catch (\Throwable $e) {
       $command_helper->error("Release $from failed -> {$e->getMessage()}");
     }
   }

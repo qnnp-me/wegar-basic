@@ -91,6 +91,12 @@ class EnvTest extends TestCase
     $this->assertSame(1000.0, \Wegar\Basic\env('FOO'));
   }
 
+  public function testUppercaseScientificNotationIsFloat(): void
+  {
+    $this->setEnv('FOO', '1E3');
+    $this->assertSame(1000.0, \Wegar\Basic\env('FOO'));
+  }
+
   public function testParenthesizedNullAndEmpty(): void
   {
     $this->setEnv('FOO', '(null)');
