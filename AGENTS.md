@@ -28,11 +28,17 @@
 
 统一质量入口（本仓库有 composer scripts）：
 
-- 全量检查：`composer check`（= `lint` → `analyse` → `test`）
+- 全量检查：`composer check`（= `composer validate --strict` → `lint` → `analyse` → `test`）
 - 单测：`composer test`（PHPUnit 12，`tests/Unit`）
+- 覆盖率（严格门禁）：`composer test:coverage`（pcov + clover 阈值，当前 **47%**，实测基线 48.08%；CI 与本地一致拦截）。本机静态 PHP 无 pcov 时需先 `brew install php` 再 `pecl install pcov`
 - 静态分析：`composer analyse`（PHPStan level 5，**无 baseline**，任何报错都需当次修复）
 - 风格：`composer lint`（PHP-CS-Fixer `--dry-run`，规则故意保持轻量、兼容 2 空格缩进）
 - 单项语法检查：`php -l <file>`；依赖安装：`composer install`
+- 集成宿主一次性构建：`composer host:setup`（基于真实 `create-project workerman/webman:^2` 在 `.webman-host` 落地，再 path 安装本仓库；产物 gitignore；可重复执行做刷新）。本地需先 setup；CI 独立 job 缓存 `.webman-host`
+- 集成测试：`composer test:integration`（真宿主端到端；宿主缺失时整 suite skip）。CI 独立 job（缓存命中时数秒），失败不阻断 unit 快线
+- CI：`unit` job（validate/lint/analyse/test:coverage，PHP 8.3/8.4 矩阵）+ `integration` job；变异（阶段四）不在 CI 内
+- 测试脚本目录：CLI 入口在 `tests/scripts/`，工具类在 `tests/Tools/`（目录与大小写都不同，勿混）
+- 测试文档：`docs/superpowers/specs/` 为唯一设计基线；**不再提交阶段 plan**，实现过程记录走 PR/issue
 - 测试无自定义桩：`tests/bootstrap.php` 只加载 composer autoload；webman helper 与 `support\Response|Model` 由硬依赖真实提供，直接使用即可。
 - 在**宿主项目**中注册的命令：`php webman phinx ...`（代理 PhinxApplication）、`php webman wegar:basic:update`（交互式对比并升级 `config/plugin/wegar/basic` 文件，`Command/Updater.php:14`）
 
