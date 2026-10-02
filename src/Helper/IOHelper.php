@@ -49,7 +49,9 @@ class IOHelper
     if (!is_array($include)) $include = [$include];
     if (!is_array($exclude)) $exclude = [$exclude];
     if (is_file($path)) {
-      yield $path;
+      if (self::match_path($include, $exclude, basename($path))) {
+        yield $path;
+      }
     } else {
       $items = is_dir($path) ? scandir($path) : [];
       foreach ($items as $item) {
@@ -57,30 +59,44 @@ class IOHelper
         $item_path = $path . DIRECTORY_SEPARATOR . $item;
         if (is_dir($item_path)) {
           yield from static::scan_files($item_path, $include, $exclude);
-        } else {
-          $match_check = function (array $include, $item, bool $default = false) {
-            foreach ($include as $i) {
-              $is_preg = preg_match('~^([/#\~]).+([/#\~])$~', $i);
-              if ($is_preg && preg_match($i, $item)) {
-                return true;
-              }
-              $is_pan = !$is_preg && (str_starts_with($i, '*') || str_starts_with($i, '.'));
-              if ($is_pan && str_ends_with($item, str_replace('*', '', $i))) {
-                return true;
-              }
-              if ($i == $item) {
-                return true;
-              }
-            }
-            return $default;
-          };
-          $include_match = $match_check($include, $item, empty($include));
-          $exclude_match = $match_check($exclude, $item, false);
-          if (!$include_match) continue;
-          if ($exclude_match) continue;
+        } elseif (self::match_path($include, $exclude, $item)) {
           yield $item_path;
         }
       }
     }
+  }
+
+  /**
+   * 条目名是否通过 include（白名单，空则全通过）且未命中 exclude（黑名单）。
+   * 目录条目用文件/目录名，单文件路径用 basename，语义一致。
+   *
+   * @param string[] $include
+   * @param string[] $exclude
+   */
+  private static function match_path(array $include, array $exclude, string $item): bool
+  {
+    return self::match_patterns($include, $item, empty($include))
+      && !self::match_patterns($exclude, $item, false);
+  }
+
+  /**
+   * @param string[] $patterns
+   */
+  private static function match_patterns(array $patterns, string $item, bool $default): bool
+  {
+    foreach ($patterns as $pattern) {
+      $is_preg = preg_match('~^([/#\~]).+([/#\~])$~', $pattern);
+      if ($is_preg && preg_match($pattern, $item)) {
+        return true;
+      }
+      $is_pan = !$is_preg && (str_starts_with($pattern, '*') || str_starts_with($pattern, '.'));
+      if ($is_pan && str_ends_with($item, str_replace('*', '', $pattern))) {
+        return true;
+      }
+      if ($pattern == $item) {
+        return true;
+      }
+    }
+    return $default;
   }
 }

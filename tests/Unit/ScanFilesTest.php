@@ -63,6 +63,22 @@ class ScanFilesTest extends TestCase
     $this->assertSame([$this->tmpDir . '/a.php'], $files);
   }
 
+  public function testSingleFileRespectsIncludeExclude(): void
+  {
+    $file = $this->tmpDir . '/a.php';
+
+    // 无过滤：原样返回
+    $this->assertSame([$file], iterator_to_array(IOHelper::scan_files($file), false));
+    // include 命中：保留
+    $this->assertSame([$file], iterator_to_array(IOHelper::scan_files($file, include: '*.php'), false));
+    // include 未命中：排除
+    $this->assertSame([], iterator_to_array(IOHelper::scan_files($file, include: '*.js'), false));
+    // exclude 命中：排除
+    $this->assertSame([], iterator_to_array(IOHelper::scan_files($file, exclude: 'a.php'), false));
+    // exclude 未命中：保留
+    $this->assertSame([$file], iterator_to_array(IOHelper::scan_files($file, exclude: '.js'), false));
+  }
+
   public function testIncludeGlobStar(): void
   {
     $files = iterator_to_array(IOHelper::scan_files($this->tmpDir, include: '*.php'), false);
