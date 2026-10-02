@@ -12,6 +12,12 @@
       <directory>src/config</directory>
     </exclude>
   </source>
+  <php>
+    <!-- 颜色用例断言数字色号产生的 ANSI 转义，php-console-color 的
+         256 色判断依赖 TERM 含 "256color"，CI 未设置 TERM 会退化为纯文本。
+         固定测试进程的 TERM，使断言不依赖运行环境。 -->
+    <env name="TERM" value="xterm-256color" force="true"/>
+  </php>
   <testsuites>
     <testsuite name="Unit">
       <directory>tests/Unit</directory>
