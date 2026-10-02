@@ -106,25 +106,36 @@ class ScanFilesTest extends TestCase
     ], $files);
   }
 
+  /**
+   * include 是白名单、exclude 是黑名单：include='.php', exclude='.log' 时
+   * 只应留下 .php 文件；g.log 即便命中 exclude 也绝不能被放进来。
+   */
   public function testIncludeExcludeCombination(): void
   {
-    // Per IOHelper.php:77-81 quirk:
-    //  - include=T, exclude=T -> skip
-    //  - include=T, exclude=F -> yield
-    //  - include=F, exclude=T -> yield (odd case)
-    //  - include=F, exclude=F -> skip
-    // So when include='.php' and exclude='.log':
-    //   file.php: include=T (matches .php), exclude=F -> yield
-    //   file.js:  include=F (no .php), exclude=F -> skip
-    //   file.log: include=F, exclude=T -> yield (per quirky logic)
-    //   file.txt: include=F, exclude=F -> skip
     $files = iterator_to_array(IOHelper::scan_files($this->tmpDir, include: '.php', exclude: '.log'), false);
     sort($files);
     $this->assertSame([
       $this->tmpDir . '/a.php',
       $this->tmpDir . '/sub/d.php',
       $this->tmpDir . '/sub/deep/f.php',
-      $this->tmpDir . '/sub/deep/g.log',
     ], $files);
+  }
+
+  public function testIncludeExcludeCombinationBoundsBothWays(): void
+  {
+    // 命中 include 且命中 exclude → 排除
+    $f = iterator_to_array(IOHelper::scan_files($this->tmpDir, include: '.php', exclude: 'a.php'), false);
+    $this->assertNotContains($this->tmpDir . '/a.php', $f);
+    $this->assertContains($this->tmpDir . '/sub/d.php', $f);
+
+    // 仅 exclude（不传 include）→ 排除命中项，其余保留（7-2=5）
+    $g = iterator_to_array(IOHelper::scan_files($this->tmpDir, exclude: '.js'), false);
+    $this->assertCount(5, $g);
+    $this->assertNotContains($this->tmpDir . '/b.js', $g);
+    $this->assertNotContains($this->tmpDir . '/sub/e.js', $g);
+
+    // include='.txt'、exclude='.log'：只命中 exclude 的 g.log 必须被排除
+    $h = iterator_to_array(IOHelper::scan_files($this->tmpDir, include: '.txt', exclude: '.log'), false);
+    $this->assertSame([$this->tmpDir . '/c.txt'], $h);
   }
 }

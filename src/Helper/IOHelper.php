@@ -76,8 +76,8 @@ class IOHelper
           };
           $include_match = $match_check($include, $item, empty($include));
           $exclude_match = $match_check($exclude, $item, false);
-          if ($include_match && $exclude_match) continue;
-          if (!$include_match && !$exclude_match) continue;
+          if (!$include_match) continue;
+          if ($exclude_match) continue;
           yield $item_path;
         }
       }
