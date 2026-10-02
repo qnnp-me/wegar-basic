@@ -17,7 +17,7 @@ class CommandHelper
 {
   protected InputInterface $input;
   protected OutputInterface $output;
-  protected ConsoleColor $consoleColor;
+  protected ?ConsoleColor $consoleColor = null;
 
   /**
    * 静默模式：为 true 时所有输出被抑制（如测试中调用初始化脚本时）
@@ -26,13 +26,35 @@ class CommandHelper
 
   function __construct()
   {
-    $this->consoleColor = new ConsoleColor();
-    $this->output = new ConsoleOutput();
+    /**
+     * php-console-color 在 STDOUT 已关闭的守护进程（`-d`）下会让
+     * `posix_isatty()` 抛 TypeError；PHP 8.5 的 `@` 压不住 Error，
+     * 会直接蔓延到 InitProcess 导致 worker exit 64000 被反复重启。
+     * 这里把它降级为可空，让 color()/bgColor() 在 null 时返回纯文本。
+     */
+    try {
+      $this->consoleColor = new ConsoleColor();
+    } catch (\Throwable) {
+      $this->consoleColor = null;
+    }
+    /**
+     * 同理：守护进程下 Symfony 的 ConsoleOutput 也可能因 STDOUT/STDERR
+     * 不是有效流而抛 InvalidArgumentException。降级为 NullOutput 让
+     * write() 不抛错；下游 log 落库仍由 Monolog 负责（不经过这里）。
+     */
+    try {
+      $this->output = new ConsoleOutput();
+    } catch (\Throwable) {
+      $this->output = new \Symfony\Component\Console\Output\NullOutput();
+    }
     $this->input = new StringInput('');
   }
 
   function color($str, int $front, ?int $back = null): string
   {
+    if ($this->consoleColor === null) {
+      return $str;
+    }
     $str = $this->consoleColor->apply("color_$front", $str);
     if ($back) $str = $this->bgColor($str, $back);
     return $str;
@@ -40,6 +62,9 @@ class CommandHelper
 
   function bgColor($str, int $color): string
   {
+    if ($this->consoleColor === null) {
+      return $str;
+    }
     return $this->consoleColor->apply("bg_color_$color", $str);
   }
 
