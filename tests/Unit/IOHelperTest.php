@@ -7,11 +7,18 @@ use Wegar\Basic\Helper\IOHelper;
 
 class IOHelperTest extends TestCase
 {
-  public function testReleaseIsNoopOutsidePharAndDoesNotThrow(): void
+  public function testReleaseIsNoopOutsidePhar(): void
   {
-    $to = sys_get_temp_dir() . '/wegar-release-' . uniqid();
-    // 非 phar 上下文：release() 应为 no-op，且不得因 `new Phar(Phar::running())` 抛出
-    IOHelper::release('.env.example', $to);
-    $this->assertDirectoryDoesNotExist($to);
+    $to = sys_get_temp_dir() . '/wegar-release-' . bin2hex(random_bytes(4));
+    mkdir($to, 0777, true);
+    file_put_contents($to . '/keep.txt', 'keep');
+    try {
+      IOHelper::release('.env.example', $to);          // 非 phar：no-op
+      $this->assertFileExists($to . '/keep.txt');      // 未清理目标目录
+      $this->assertFileDoesNotExist($to . '/.env.example'); // 未释放任何文件
+    } finally {
+      @unlink($to . '/keep.txt');
+      @rmdir($to);
+    }
   }
 }

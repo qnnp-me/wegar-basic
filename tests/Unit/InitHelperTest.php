@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Tests\Fixtures\Init\Recorder;
+use Tests\Fixtures\InitEdge\ThrowingRunner;
 use Wegar\Basic\Helper\CommandHelper;
 use Wegar\Basic\Helper\InitHelper;
 
@@ -12,6 +13,7 @@ class InitHelperTest extends TestCase
   protected function setUp(): void
   {
     Recorder::reset();
+    ThrowingRunner::$thrown = 0;
     InitHelper::$results = [];
     InitHelper::$namespace = '';
     InitHelper::$relative_dir = '';
@@ -64,6 +66,7 @@ class InitHelperTest extends TestCase
     // ThrowingRunner weight=2 最先执行并抛异常；若未被 catch，load() 会中断、Recorder 为空。
     InitHelper::load(self::EDGE, self::EDGE_NS);
     $this->assertSame(['Static', 'Default'], Recorder::$order, 'throwing runner must be caught and not halt later runners');
+    $this->assertSame(1, ThrowingRunner::$thrown);
   }
 
   public function testDefaultWeightApplied(): void
@@ -130,8 +133,12 @@ PHP);
   /**
    * 显式传 namespace 时不受目录首条文件类型影响：调用方已声明命名空间，
    * 非 PHP 文件的存在不应干扰 init 类的发现与执行。
+   *
+   * 这里验证的是「显式 namespace 契约」本身，**不是** bug B 的回归守卫 ——
+   * bug B（首条目为非 PHP 文件导致 namespace 推导失败）由
+   * testNonPhpEntryDoesNotBlockNamespaceDiscovery 守卫。
    */
-  public function testExplicitNamespaceIgnoresNonPhpEntries(): void
+  public function testExplicitNamespaceContractUnaffectedByNonPhpEntries(): void
   {
     $dir = sys_get_temp_dir() . '/wegar-init-explicit-' . bin2hex(random_bytes(4));
     mkdir($dir, 0777, true);
