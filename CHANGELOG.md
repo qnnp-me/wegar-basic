@@ -3,6 +3,21 @@
 本仓库的发布记录。版本按 [Semantic Versioning](https://semver.org/)，
 且遵循本仓库 `composer.json` 的 `php >= 8.3` 约束。
 
+## [1.0.52] - 2026-10-02
+
+仅修复测试与 CI，无生产代码变更，对下游无行为影响。
+
+### Tests
+
+- 修复 `unit` 矩阵（PHP 8.3/8.4）上 3 个颜色用例失败：
+  `CommandHelperTest::testColorAndBgColorWrapText`、
+  `CommandTraitTest::testColorContainsText` / `testBgColorWrapsText`。
+  根因是这些用例断言数字色号产生的 ANSI 转义，而
+  `php-console-color` 的 256 色判断依赖 `getenv('TERM')` 含 `256color`；
+  CI runner 未设置 `TERM`，颜色退化为纯文本。现通过 `phpunit.xml` 的
+  `<env name="TERM" value="xterm-256color" force="true"/>` 固定测试进程
+  环境，断言不再依赖运行环境。
+
 ## [1.0.51] - 2026-10-02
 
 修复两个下游真实故障（`project.datahub-business` 报告，SJTPL-103），
