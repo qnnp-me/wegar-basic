@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Wegar\Basic\Helper\CommandHelper;
 
 class CommandHelperTest extends TestCase
@@ -25,6 +26,7 @@ class CommandHelperTest extends TestCase
   protected function tearDown(): void
   {
     CommandHelper::$quiet = false;
+    CommandHelper::$errorSink = null;
   }
 
   private function withInput(string $raw): void
@@ -200,5 +202,62 @@ PHP);
     } finally {
       @unlink($script);
     }
+  }
+
+  /**
+   * 守护模式 `-d` 下 Workerman 关闭 STDOUT/STDERR，ConsoleOutput 退化为
+   * NullOutput；此时错误必须改走可持久化落点（用 $errorSink 捕获验证），
+   * 不能只写 console 而静默丢失。
+   */
+  public function testErrorPersistsViaSinkWhenConsoleUnavailable(): void
+  {
+    $captured = [];
+    CommandHelper::$errorSink = function (string $msg) use (&$captured): void {
+      $captured[] = $msg;
+    };
+    (new ReflectionProperty(CommandHelper::class, 'output'))->setValue($this->helper, new NullOutput());
+    try {
+      $this->helper->error('boom-msg');
+      $this->helper->failed('fail-msg');
+    } finally {
+      CommandHelper::$errorSink = null;
+    }
+    $joined = implode("\n", $captured);
+    $this->assertStringContainsString('boom-msg', $joined);
+    $this->assertStringContainsString('fail-msg', $joined);
+  }
+
+  /**
+   * 控制台可用（测试里是 BufferedOutput）时不应重复落盘，避免正常 CLI 双写。
+   */
+  public function testErrorNotPersistedWhenConsoleAvailable(): void
+  {
+    $called = false;
+    CommandHelper::$errorSink = function () use (&$called): void {
+      $called = true;
+    };
+    try {
+      $this->helper->error('x');
+    } finally {
+      CommandHelper::$errorSink = null;
+    }
+    $this->assertFalse($called, '控制台可用时不应重复落盘');
+  }
+
+  public function testErrorNotPersistedWhenQuiet(): void
+  {
+    $called = false;
+    CommandHelper::$errorSink = function () use (&$called): void {
+      $called = true;
+    };
+    (new ReflectionProperty(CommandHelper::class, 'output'))->setValue($this->helper, new NullOutput());
+    CommandHelper::$quiet = true;
+    try {
+      $this->helper->error('x');
+    } finally {
+      CommandHelper::$quiet = false;
+      CommandHelper::$errorSink = null;
+    }
+    $this->assertFalse($called);
   }
 }

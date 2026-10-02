@@ -24,6 +24,14 @@ class CommandHelper
    */
   public static bool $quiet = false;
 
+  /**
+   * 错误持久化落点覆盖（测试/宿主可注入）；为 null 时走 webman 的
+   * support\Log，再兜底 error_log。
+   *
+   * @var null|callable(string):void
+   */
+  public static $errorSink = null;
+
   function __construct()
   {
     /**
@@ -104,13 +112,55 @@ class CommandHelper
   function error(string|iterable $messages): void
   {
     if (Logger::ERROR < config('log.default.handlers.0.constructor.2', Logger::DEBUG)) return;
+    if ($messages instanceof \Traversable) $messages = iterator_to_array($messages, false);
+    $this->persistError($messages, 'error');
     $this->writeln($this->addPrefix($messages, '🐞'), tag: "Error  ", back: 160);
   }
 
   function failed(string|iterable $messages): void
   {
     if (Logger::CRITICAL < config('log.default.handlers.0.constructor.2', Logger::DEBUG)) return;
+    if ($messages instanceof \Traversable) $messages = iterator_to_array($messages, false);
+    $this->persistError($messages, 'critical');
     $this->writeln($this->addPrefix($messages, '💔'), tag: "Failed ", back: 160);
+  }
+
+  /**
+   * 守护进程 `-d` 下 Workerman 会 fclose(STDOUT)/fclose(STDERR)，ConsoleOutput
+   * 构造失败退化为 NullOutput，错误只写 console 就彻底丢失。此时改落可持久化
+   * 的日志：优先 webman 的 support\Log（Monolog 落文件），兜底 error_log；
+   * 控制台可用时不重复落盘，quiet 模式（测试/显式静默）不落盘。
+   *
+   * 任何落点（含宿主注入的 $errorSink）抛错都被吞掉，持久化失败绝不能影响
+   * 主流程。
+   */
+  private function persistError(string|iterable $messages, string $level): void
+  {
+    if (self::$quiet) {
+      return;
+    }
+    if (!$this->output instanceof \Symfony\Component\Console\Output\NullOutput) {
+      return;
+    }
+    $lines = is_array($messages) ? $messages : (is_string($messages) ? [$messages] : iterator_to_array($messages, false));
+    $text = '[wegar.basic] ' . implode(PHP_EOL, $lines);
+    try {
+      if (self::$errorSink !== null) {
+        (self::$errorSink)($text);
+        return;
+      }
+      if (class_exists(\support\Log::class)) {
+        if ($level === 'critical') {
+          \support\Log::critical($text);
+        } else {
+          \support\Log::error($text);
+        }
+        return;
+      }
+      error_log($text);
+    } catch (\Throwable) {
+      // 持久化失败绝不能影响主流程
+    }
   }
 
   protected function writeln(string|iterable $messages, int $options = 0, ?string $tag = null, int $front = 231, int $back = 240): void
