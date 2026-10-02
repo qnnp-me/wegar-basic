@@ -25,6 +25,9 @@ class InitHelper
       return;
     }
     self::prepare_init_functions($init_dir, $init_functions);
+    if (!$init_functions) {
+      $command_helper->notice("No init classes found -> $relative_dir");
+    }
     foreach ($init_functions as $function) {
       try {
         $the_file = str_replace(base_path(), '', $function['file']);
@@ -46,7 +49,12 @@ class InitHelper
     $init_functions = [];
     $relative_dir = self::$relative_dir;
     $command_helper = new CommandHelper();
-    $all_files = IOHelper::scan_files($init_dir);
+    /**
+     * 显式按 *.php 过滤，避免 .gitkeep / .md 等非 PHP 文件被当作 init 类来源
+     * ——历史上 scandir 首个非 PHP 条目会让 namespace 推导失败，导致整批 init
+     * 类被静默跳过。
+     */
+    $all_files = IOHelper::scan_files($init_dir, include: '*.php');
     $command_helper->notice('Processing Init Files -> ' . str_replace(base_path(), '', $relative_dir));
     foreach ($all_files as $key => $file) {
       if (!$key) {

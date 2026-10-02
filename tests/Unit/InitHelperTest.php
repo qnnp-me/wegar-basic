@@ -85,4 +85,82 @@ class InitHelperTest extends TestCase
     InitHelper::load(self::EDGE, self::EDGE_NS);
     $this->assertSame([], InitHelper::$results);
   }
+
+  /**
+   * Reproducer for defect B: 当 init 目录中存在非 PHP 文件（如 .gitkeep）且
+   * scandir 顺序让其排在前时，prepare_init_functions() 历史上只从第一个条目
+   * 推导 namespace，导致 self::$namespace 留空 → 后续类名解析失败 → 整批
+   * init 类被静默跳过。修复后必须仍能正确发现并执行同名命名空间下的 init 类。
+   */
+  public function testNonPhpEntryDoesNotBlockNamespaceDiscovery(): void
+  {
+    $dir = sys_get_temp_dir() . '/wegar-init-mixed-' . bin2hex(random_bytes(4));
+    mkdir($dir, 0777, true);
+    // .gitkeep 排在前，模拟下游仓库的真实顺序
+    file_put_contents($dir . '/.gitkeep', '');
+    file_put_contents($dir . '/MixedRunner.php', <<<'PHP'
+<?php
+namespace Tests\Fixtures\InitMixed;
+
+use Tests\Fixtures\Init\Recorder;
+use Wegar\Basic\Abstract\InitAbstract;
+
+class MixedRunner extends InitAbstract
+{
+  public int $weight = 5;
+  public function run(): void
+  {
+    Recorder::add('Mixed');
+  }
+}
+PHP);
+    require_once $dir . '/MixedRunner.php';
+
+    try {
+      InitHelper::load($dir);
+      $this->assertSame('\\Tests\\Fixtures\\InitMixed', InitHelper::$namespace);
+      $this->assertContains('Mixed', Recorder::$order, 'init class must run even when non-PHP file sorts first');
+    } finally {
+      @unlink($dir . '/.gitkeep');
+      @unlink($dir . '/MixedRunner.php');
+      @rmdir($dir);
+    }
+  }
+
+  /**
+   * 显式传 namespace 时不受目录首条文件类型影响：调用方已声明命名空间，
+   * 非 PHP 文件的存在不应干扰 init 类的发现与执行。
+   */
+  public function testExplicitNamespaceIgnoresNonPhpEntries(): void
+  {
+    $dir = sys_get_temp_dir() . '/wegar-init-explicit-' . bin2hex(random_bytes(4));
+    mkdir($dir, 0777, true);
+    file_put_contents($dir . '/.gitkeep', '');
+    file_put_contents($dir . '/ExplicitRunner.php', <<<'PHP'
+<?php
+namespace Tests\Fixtures\InitMixedExplicit;
+
+use Tests\Fixtures\Init\Recorder;
+use Wegar\Basic\Abstract\InitAbstract;
+
+class ExplicitRunner extends InitAbstract
+{
+  public int $weight = 5;
+  public function run(): void
+  {
+    Recorder::add('Explicit');
+  }
+}
+PHP);
+    require_once $dir . '/ExplicitRunner.php';
+
+    try {
+      InitHelper::load($dir, '\\Tests\\Fixtures\\InitMixedExplicit');
+      $this->assertContains('Explicit', Recorder::$order);
+    } finally {
+      @unlink($dir . '/.gitkeep');
+      @unlink($dir . '/ExplicitRunner.php');
+      @rmdir($dir);
+    }
+  }
 }
