@@ -42,3 +42,17 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer host:setup
       - run: composer test:integration
+
+  # 「最新允许版本」单测：抬高 platform 后解析出 PHPUnit 13 / sebastian-diff 9 /
+  # monolog 3 等最新兼容组合。8.3 平台锁定仍由 unit job 保证最低版本可装；
+  # 本 job 负责验证最新组合并捕捉上游漂移。
+  latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+      - run: composer config platform.php 8.4.99
+      - run: composer update --with-all-dependencies --no-interaction --prefer-dist
+      - run: composer test
