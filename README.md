@@ -144,6 +144,18 @@ class Foo {
 
 [//]: # (    - 前端访问 `/test-page{remaining_path: .*}` 可直接渲染远程组件/APP)
 
+## .env 优化命令 <a name="env-optimize"></a>
+
+`php webman wegar:basic:env` 扫描 `config/`（默认跳过 `config/plugin`），挑出连接/凭据类字面量
+（`host`/`port`/`database`/`username`/`password` 等），生成或更新 `.env.example`。默认只预演，
+不改动配置；加 `--write` 才会把 config 里的字面量改写为 `env('KEY', 原值)`，改写前原文件备份为 `*.bak`。
+
+```bash
+php webman wegar:basic:env                 # 预演：只更新 .env.example
+php webman wegar:basic:env --write         # 落盘：改写 config（原文件备份为 *.bak）
+php webman wegar:basic:env --path=config --env-file=.env.example --exclude=plugin
+```
+
 ## 配置项
 
 > `app.error_with_status`: 错误响应是否影响HTTP状态码（默认为 false ）
@@ -155,7 +167,3 @@ class Foo {
   - `json_error` json err 响应
   - `ss` 用于 session 快捷管理，通过修改 `config/plugin/wegar/basic/helper/SessionHelper.php` 增加自定义 session
 
-## TODO
-
-- 添加针对 `.env` 文件的项目优化命令，用于自动处理相关配置文件以使用 `.env` 文件
-- 完善 `Phar` 环境文件释放功能，如数据库迁移文件等

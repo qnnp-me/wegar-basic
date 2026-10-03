@@ -18,8 +18,9 @@ trait Command
 
   public function __construct()
   {
-    // @phpstan-ignore function.alreadyNarrowedType (防御: trait 也可能被非 Command 类误用)
-    if (!is_subclass_of(static::class, \Symfony\Component\Console\Command\Command::class)) {
+    // 防御：trait 也可能被非 Command 类误用。这里用 class_parents 而非 is_subclass_of——
+    // 在项目内全部用法下 is_subclass_of(static::class, Command) 恒为 true，会被静态分析判为冗余。
+    if (!in_array(\Symfony\Component\Console\Command\Command::class, class_parents(static::class) ?: [], true)) {
       throw new \Exception('Command must be subclass of Symfony\Component\Console\Command\Command');
     }
     $this->consoleColor = new ConsoleColor();
