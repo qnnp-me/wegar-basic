@@ -1,0 +1,25 @@
+name: nightly
+
+on:
+  schedule:
+    # UTC 18:00 = 北京时间 02:00
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  # 阶段四：全量变异。门槛以本地 baseline（Covered MSI 45%）起设，之后逐次抬高。
+  mutation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: pcov
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer test:mutation
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: infection
+          path: build/infection/

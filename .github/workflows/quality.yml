@@ -22,6 +22,14 @@ jobs:
       - run: composer analyse
       # 单测仅跑一次：test:coverage 内含 phpunit，避免 check 后再重复跑一套（BL-006）
       - run: composer test:coverage
+      # BL-010：上传覆盖率到 Codecov。公开仓库可无 token；私有仓库需配置
+      # secrets.CODECOV_TOKEN。fail_ci_if_error=false，避免外部服务抖动阻断 CI。
+      - uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: build/coverage/clover.xml
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -1,0 +1,25 @@
+{
+  "$schema": "vendor/infection/infection/resources/schema.json",
+  "source": {
+    "directories": ["src"],
+    "excludes": ["src/config"]
+  },
+  "testFramework": "phpunit",
+  "testFrameworkOptions": "--testsuite Unit",
+  "phpUnit": {
+    "configDir": "."
+  },
+  "logs": {
+    "text": "build/infection/infection.log",
+    "html": "build/infection/infection.html",
+    "json": "build/infection/infection.json",
+    "summary": "build/infection/summary.log",
+    "perMutator": "build/infection/per-mutator.md"
+  },
+  "minMsi": 45,
+  "minCoveredMsi": 45,
+  "ignoreMsiWithNoMutations": true,
+  "mutators": {
+    "@default": true
+  }
+}

@@ -4,4 +4,5 @@ vendor
 .phpunit.cache
 .php-cs-fixer.cache
 build/coverage/
+build/infection/
 .webman-host/

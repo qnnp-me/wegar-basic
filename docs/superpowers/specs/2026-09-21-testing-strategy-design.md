@@ -113,8 +113,8 @@
 ### L5 变异测试
 - `infection/infection ^0.35`（已验证支持 PHPUnit 12）。
 - `infection.json5`：`source.directories=[src]`、`source.excludes=[src/config]`；`testFramework=phpunit` 且**只跑单测**（集成成本高，不参与变异）。
-- 门槛：`minMsi`/`minCoveredMsi` 由 baseline 起设、逐次抬高。
-- 运行：nightly 全量；本地/手动可用 `--git-diff-filter=AM --git-diff-lines` 只变异改动行提速。**PR 不跑变异**（与第 7 节一致）。
+- 门槛：`minMsi`/`minCoveredMsi` 由 baseline 起设、逐次抬高。**2026-10-03 实测 baseline**：Covered MSI 45%（412 变异、覆盖 100%、4 timeout，本机 pcov，18s），门槛设为 45。
+- 运行：nightly 全量（`.github/workflows/nightly.yml`，`composer test:mutation`）；本地/手动可用 `--git-diff-filter=AM --git-diff-lines` 只变异改动行提速。**PR 不跑变异**（与第 7 节一致）。
 - **等价变异/不可达分支**（如 phar 分支）显式 ignore，且在 spec/配置中**书面记录理由**，禁止静默忽略。
 
 ## 4. 宿主策略：真实 `create-project` + 缓存
