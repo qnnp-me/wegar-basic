@@ -101,7 +101,7 @@
 - **不 `start.php start` 起停 Workerman 服务**（易抖）。用 `php webman` 控制台 + 宿主侧 `tests/init-boot.php`（真实加载 `support/bootstrap.php` 后调 `InitHelper::load()`）模拟真实 Init 入口；确需验证进程注册时，另加隔离的启动-停止冒烟并标注易抖。
 
 ### L3 夜间 / 发版验收（慢）
-- nightly：全量变异 + 版本矩阵（PHP 8.3/8.4 × webman 1.6/2.x × `workerman/crontab` 版本）。集成套件（`composer test:integration`）已作为独立 job 跑在 CI（见 §7）。
+- nightly：全量变异 + 版本矩阵（PHP 8.3/8.4 × webman 2.x × `workerman/crontab` 版本）。集成套件（`composer test:integration`）已作为独立 job 跑在 CI（见 §7）。
 - tag：`ReleaseFiles` 发布物验收 + Roave BC 检查 + 干净 `create-project` + path 安装本插件跑 L2 全场景 + Updater 真实升级路径。
 
 ### L4 覆盖率
