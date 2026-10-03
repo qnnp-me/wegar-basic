@@ -10,6 +10,18 @@
     </include>
     <exclude>
       <directory>src/config</directory>
+      <!-- 进程/CLI 边界：仅由集成套件（子进程 `php webman`/phar）行为覆盖，
+           pcov 无法在进程内采集，故不计入 Unit 覆盖率门禁。理由见
+           docs/superpowers/specs/2026-09-21-testing-strategy-design.md §L4。 -->
+      <file>src/Command/Phinx.php</file>
+      <file>src/Command/Updater.php</file>
+      <file>src/Helper/CronHelper.php</file>
+      <file>src/Helper/PhinxHelper.php</file>
+      <file>src/Init/CheckFilesDirectories.php</file>
+      <file>src/Init/Phinx.php</file>
+      <file>src/Init/ReleaseFiles.php</file>
+      <file>src/Install.php</file>
+      <file>src/Process/InitProcess.php</file>
     </exclude>
   </source>
   <php>

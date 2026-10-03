@@ -106,14 +106,16 @@
 
 ### L4 覆盖率
 - 安装 **pcov**（本地 + CI，较 xdebug 快），`phpunit --coverage-clover`（Codecov）+ `--coverage-text`。
-- 阈值：**先跑基线**再设门槛。2026-09-25 实测基线：`src` 行覆盖 **48.75%**（`src/config` 已排除）。当前 `composer test:coverage` 门禁阈值 **47%**（`.github/workflows/quality.yml` 已移除 `continue-on-error`，CI 真拦截）；梯度目标维持 `src` 行覆盖 ≥85%、核心 Helper（DTO/InitHelper/CommandHelper）≥95%，随测试补齐逐步抬高。
-- `<source>`/`<exclude>`：排除 `src/config/**` 及 phar 等不可达分支（显式列明理由）。
-- **门禁现状（2026-09-25）**：`continue-on-error` 已移除，CI 与本地 `composer test:coverage` 同为严格门禁；阈值 47% 由实测基线校准，随覆盖提升再抬。CI 不再重复跑单测（`test:coverage` 内含 phpunit；BL-006）。本机容器为静态 PHP，安装 pcov 需 `brew install php` + `pecl install pcov`（无 pecl/phpize 时无法采集）。
+- **口径修订（2026-10-03，BL-017）**：原按「全量 src 行覆盖」设 85% 目标，实测停在 48.75% 时发现缺口主要来自**度量边界**而非质量——集成套件是**子进程执行**（`php webman`/phar），pcov 无法在进程内采集，这些文件永远 0%。故改为只统计「进程内可单测」的代码：
+  - `<source><exclude>` 排除 `src/config/**`（宿主扩展位）与 9 个进程/CLI 边界文件：`Command/Phinx`、`Command/Updater`、`Helper/CronHelper`、`Helper/PhinxHelper`、`Init/CheckFilesDirectories`、`Init/Phinx`、`Init/ReleaseFiles`、`Install`、`Process/InitProcess`。它们由**集成套件行为覆盖**（`InstallTest`/`PhinxMigrationTest`/`CronRegistrationTest`/`UpdaterTest`/`PharReleaseTest`/`InitPipelineTest`）。
+  - `@codeCoverageIgnore`（附书面理由）仅用于进程内不可复现的分支：phar I/O（构造 phar 需启动时 `phar.readonly=0`）、守护模式构造函数 catch、`support\Log` 落点（单元缺 webman log 配置会告警）、tty 隐藏输入。
+- 阈值：`composer test:coverage` 门禁 **85%**（`.github/workflows/quality.yml` 真拦截，已移除 `continue-on-error`）。**2026-10-03 实测 91.99%（310/337）**；核心 Helper 实测：`CommandHelper` 99%、`IOHelper` 96.6%、`InitHelper` 98%、`DTO` 100%、`Trait\Command` 89.5%、`functions_psr` 89.8%。梯度目标维持核心 Helper ≥95%，随测试补齐逐步抬高阈值。
+- CI 不再重复跑单测（`test:coverage` 内含 phpunit；BL-006）。本机容器为静态 PHP，安装 pcov 需 `brew install php` + `pecl install pcov`（无 pecl/phpize 时无法采集）。
 
 ### L5 变异测试
 - `infection/infection ^0.35`（已验证支持 PHPUnit 12）。
-- `infection.json5`：`source.directories=[src]`、`source.excludes=[src/config]`；`testFramework=phpunit` 且**只跑单测**（集成成本高，不参与变异）。
-- 门槛：`minMsi`/`minCoveredMsi` 由 baseline 起设、逐次抬高。**2026-10-03 实测 baseline**：Covered MSI 45%（412 变异、覆盖 100%、4 timeout，本机 pcov，18s），门槛设为 45。
+- `infection.json5`：`source.directories=[src]`、`source.excludes` 与 L4 同一份排除清单（`src/config` + 9 个进程/CLI 边界文件）；`testFramework=phpunit` 且**只跑单测**（集成成本高，不参与变异）。
+- 门槛：`minMsi`/`minCoveredMsi` 由 baseline 起设、逐次抬高。**2026-10-03 实测 baseline**：Covered MSI 46%（412 变异、覆盖 100%、4 timeout，本机 pcov，18s），门槛设 45（留 1 点防抖动）。
 - 运行：nightly 全量（`.github/workflows/nightly.yml`，`composer test:mutation`）；本地/手动可用 `--git-diff-filter=AM --git-diff-lines` 只变异改动行提速。**PR 不跑变异**（与第 7 节一致）。
 - **等价变异/不可达分支**（如 phar 分支）显式 ignore，且在 spec/配置中**书面记录理由**，禁止静默忽略。
 

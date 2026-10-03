@@ -2,7 +2,18 @@
   "$schema": "vendor/infection/infection/resources/schema.json",
   "source": {
     "directories": ["src"],
-    "excludes": ["src/config"]
+    "excludes": [
+      "src/config",
+      "src/Command/Phinx.php",
+      "src/Command/Updater.php",
+      "src/Helper/CronHelper.php",
+      "src/Helper/PhinxHelper.php",
+      "src/Init/CheckFilesDirectories.php",
+      "src/Init/Phinx.php",
+      "src/Init/ReleaseFiles.php",
+      "src/Install.php",
+      "src/Process/InitProcess.php"
+    ]
   },
   "testFramework": "phpunit",
   "testFrameworkOptions": "--testsuite Unit",

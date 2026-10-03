@@ -20,6 +20,9 @@ class IOHelper
     static $phar;
     try {
       if (is_phar()) {
+        // @codeCoverageIgnoreStart
+        // phar-only：仅 is_phar() 且 Phar::running() 时可达；构造 phar 需进程启动时
+        // phar.readonly=0（运行期改不了），单元内无法复现，由集成 PharReleaseTest 覆盖。
         if (!$phar) {
           $phar = new Phar(Phar::running());
         }
@@ -32,9 +35,12 @@ class IOHelper
         }
         $phar->extractTo($to, $from, $overwrite);
         $command_helper->info("Release $from to $to");
+        // @codeCoverageIgnoreEnd
       }
     } catch (\Throwable $e) {
+      // @codeCoverageIgnoreStart
       $command_helper->error("Release $from failed -> {$e->getMessage()}");
+      // @codeCoverageIgnoreEnd
     }
   }
 

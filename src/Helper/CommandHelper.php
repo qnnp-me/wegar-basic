@@ -42,9 +42,13 @@ class CommandHelper
      */
     try {
       $this->consoleColor = new ConsoleColor();
+      // @codeCoverageIgnoreStart
+      // 守护模式（STDOUT 已关闭）下 posix_isatty 抛错才可达；单元内无法构造，
+      // 由集成 DefectRegressionTest 覆盖。理由见 spec §L4。
     } catch (\Throwable) {
       $this->consoleColor = null;
     }
+    // @codeCoverageIgnoreEnd
     /**
      * 同理：守护进程下 Symfony 的 ConsoleOutput 也可能因 STDOUT/STDERR
      * 不是有效流而抛 InvalidArgumentException。降级为 NullOutput 让
@@ -52,9 +56,12 @@ class CommandHelper
      */
     try {
       $this->output = new ConsoleOutput();
+      // @codeCoverageIgnoreStart
+      // 守护模式下 STDOUT/STDERR 非有效流才可达；单元内无法构造，集成覆盖。
     } catch (\Throwable) {
       $this->output = new \Symfony\Component\Console\Output\NullOutput();
     }
+    // @codeCoverageIgnoreEnd
     $this->input = new StringInput('');
   }
 
@@ -149,6 +156,10 @@ class CommandHelper
         (self::$errorSink)($text);
         return;
       }
+      // @codeCoverageIgnoreStart
+      // 无注入 sink 时的落点：优先 support\Log，兜底 error_log。单元环境缺 webman
+      // log 配置，调用 support\Log 会触发 "Undefined array key default" 告警；该路径
+      // 由集成 DefectRegressionTest 覆盖。理由见 spec §L4。
       if (class_exists(\support\Log::class)) {
         if ($level === 'critical') {
           \support\Log::critical($text);
@@ -158,6 +169,7 @@ class CommandHelper
         return;
       }
       error_log($text);
+      // @codeCoverageIgnoreEnd
     } catch (\Throwable) {
       // 持久化失败绝不能影响主流程
     }
@@ -241,8 +253,11 @@ class CommandHelper
       $default
     );
     if ($hiding) {
+      // @codeCoverageIgnoreStart
+      // 隐藏输入依赖 tty（Symfony 走 stty）；无 tty 环境无法复现，真实终端/集成覆盖。
       $question->setHidden(true);
       $question->setHiddenFallback(false);
+      // @codeCoverageIgnoreEnd
     }
     ask:
     $result = $helper->ask($this->input, $this->output, $question);

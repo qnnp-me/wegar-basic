@@ -132,6 +132,12 @@ class CommandHelperTest extends TestCase
     $this->assertSame('def', $this->helper->input('name', 'def'));
   }
 
+  public function testInputRepromptsUntilRequiredSatisfied(): void
+  {
+    $this->withInput("\nhello\n");
+    $this->assertSame('hello', $this->helper->input('name', '', true, '不能为空'));
+  }
+
   public function testAlertDoesNotThrow(): void
   {
     $this->withInput("\n");

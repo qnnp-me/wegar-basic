@@ -48,7 +48,7 @@
     "lint": "php-cs-fixer fix --dry-run --diff",
     "test:coverage": [
       "@php vendor/bin/phpunit --testsuite Unit --coverage-clover build/coverage/clover.xml --coverage-text",
-      "@php tests/scripts/coverage-threshold.php build/coverage/clover.xml 47"
+      "@php tests/scripts/coverage-threshold.php build/coverage/clover.xml 85"
     ],
     "host:setup": "@php tests/scripts/host-setup.php",
     "test:integration": "phpunit --testsuite Integration",
