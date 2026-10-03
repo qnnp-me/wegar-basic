@@ -1,0 +1,12 @@
+# 不随 dist 分发的开发/CI 文件（供 Packagist / 归档导出使用）
+/.github export-ignore
+/tests export-ignore
+/build export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.php-cs-fixer.php export-ignore
+/.php-cs-fixer.cache export-ignore
+/phpstan.neon export-ignore
+/phpunit.xml export-ignore
+/AGENTS.md export-ignore

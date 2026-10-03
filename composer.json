@@ -37,6 +37,10 @@
     "phpstan/phpstan": "^2.1",
     "friendsofphp/php-cs-fixer": "^3.64"
   },
+  "suggest": {
+    "workerman/crontab": "启用 app/cron 下带 #[CronRule] 的定时任务（CronHelper）",
+    "webman/redis-queue": "启用 redis-queue 消费进程目录的预创建（CheckFilesDirectories）"
+  },
   "scripts": {
     "test": "phpunit --testsuite Unit",
     "analyse": "phpstan analyse --no-progress",
