@@ -19,8 +19,8 @@ class ReleaseFiles extends InitAbstract
         $command_helper->notice("Releasing files...");
         $host = config('extract.list', []) + config('app.build_release', []);
         $defaults = config('plugin.wegar.basic.app.release', []);
-        foreach (static::mergeReleaseList($host, $defaults) as $from => $to) {
-          IOHelper::release($from, $to);
+        foreach (static::mergeReleaseList($host, $defaults) as $from => $entry) {
+          IOHelper::release($from, $entry['to'], $entry['overwrite']);
         }
         $command_helper->success("Release success.");
       }
@@ -31,12 +31,35 @@ class ReleaseFiles extends InitAbstract
    * 合并待释放清单（纯逻辑，可单测）：宿主显式配置（`extract.list` / `app.build_release`）
    * 优先，同 `from` 以宿主为准；插件默认清单（`plugin.wegar.basic.app.release`）补齐其余项。
    *
-   * @param array<string, string> $host 宿主显式配置：from => to
-   * @param array<string, string> $pluginDefaults 插件默认：from => to
-   * @return array<string, string>
+   * 条目支持两种写法：
+   * - 字符串：`'from' => to`，默认覆盖；
+   * - 数组：`'from' => ['to' => to, 'overwrite' => false]`，可显式不覆盖（保留宿主已有文件）。
+   *
+   * @param array<string, string|array{to: string, overwrite?: bool}> $host
+   * @param array<string, string|array{to: string, overwrite?: bool}> $pluginDefaults
+   * @return array<string, array{to: string, overwrite: bool}>
    */
   public static function mergeReleaseList(array $host, array $pluginDefaults): array
   {
-    return $host + $pluginDefaults;
+    $list = [];
+    foreach ($host + $pluginDefaults as $from => $entry) {
+      $list[$from] = self::normalizeEntry($entry);
+    }
+    return $list;
+  }
+
+  /**
+   * @param string|array{to: string, overwrite?: bool} $entry
+   * @return array{to: string, overwrite: bool}
+   */
+  private static function normalizeEntry(string|array $entry): array
+  {
+    if (is_array($entry)) {
+      return [
+        'to' => $entry['to'],
+        'overwrite' => $entry['overwrite'] ?? true,
+      ];
+    }
+    return ['to' => $entry, 'overwrite' => true];
   }
 }

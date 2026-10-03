@@ -122,13 +122,18 @@ class Foo {
 # config/app.php
   ...
   'build_release' => [
-    '.env.example' => run_path(), # 将 .env.example 文件释放到运行目录下
+    '.env.example' => run_path(), # 将 .env.example 文件释放到运行目录下（默认覆盖）
     'public/' => run_path(),
     'plugin/admin/public/' => run_path(),
     'database/' => runtime_path('phinx'), # 将 database 目录释放到 phinx 运行目录下
+    # 需要保留宿主已有文件的路径，用数组形式声明不覆盖（只补缺失）
+    'plugin/foo/config.php' => ['to' => run_path('config'), 'overwrite' => false],
   ],
   ...
 ```
+
+> 条目为 `from => to` 字符串时默认**覆盖**（打包产物是唯一真相源）；写成
+> `from => ['to' => to, 'overwrite' => false]` 则**不覆盖**宿主已有文件。同 `from` 以宿主配置为准。
 
 </details>
 
