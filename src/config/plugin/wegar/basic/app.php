@@ -1,7 +1,8 @@
 <?php
 
 return [
-  'enable' => true,
+  // 环境相关标量一律走 .env，产出物内不写死环境值
+  'enable' => env('WEGAR_BASIC_ENABLE', true),
   // phar 环境下由 ReleaseFiles 释放到宿主可写路径的默认清单（from => to）。
   // 把 database/ 释放到 Phinx 运行目录，配合 phinx.php 的
   // runtime_path('phinx/database/migrations|seeds') 生效（见 README「打包文件自动释放」）。

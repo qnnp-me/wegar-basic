@@ -132,6 +132,17 @@ class Foo {
 
 </details>
 
+### 发布模型：打包即冻结，运行时只认 `.env`
+
+- **开发期**：在项目仓库里编辑代码与配置（含 `config/plugin/wegar/basic/*`）。重新 `composer update`
+  触发重装时只补缺失文件、不覆盖你的改动（`copy_dir(overwrite=false)`）；插件升级的 config 变更由
+  `php webman wegar:basic:update` 交互合并。
+- **打包期**：进 phar 的一切即为冻结快照，是唯一真相源。
+- **运行期**：从 phar 释放出来的文件都是派生副本，**一律覆盖**（改它们无意义，下次部署即被覆盖）；
+  唯一的环境差异来源是 `.env`。因此环境相关配置应 env 化：
+  - 宿主 `config/*.php` 用 `php webman wegar:basic:env` 把连接/凭据字面量迁移到 `.env`；
+  - 插件自带 config 的可变量以 `env('KEY', 默认)` 书写（如 `app.php` 的 `WEGAR_BASIC_ENABLE`）。
+
 [//]: # (## 远程 组件/APP 加载规则)
 
 [//]: # ()
